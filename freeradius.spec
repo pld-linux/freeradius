@@ -22,7 +22,7 @@ BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel
+BuildRequires:	openssl-devel >= 0.9.7
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-backend-devel
