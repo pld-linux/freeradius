@@ -59,8 +59,8 @@ more features, and is much more configurable.
 %description -l pl
 Projekt FreeRadius ma na celu stworzenie szybkiego i wysoce
 konfigurowalnego serwera RADIUS na licencji GPL. Ten jest podobny do
-Livingston 2.0 RADIUS server ale ma o wiele wiêcej ficzersów i jest
-bardziej podatny na konfiguracjê.
+Livingston 2.0 RADIUS server ale ma o wiele wiêcej funkcji i posiada
+wiêksze mo¿liwo¶ci konfigurowania.
 
 %prep
 %setup -q
