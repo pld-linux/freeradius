@@ -204,8 +204,9 @@ fi
 %dir %{_sysconfdir}/raddb
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/raddb/*
 
-%dir %{_var}/log/%{name}
-%dir %{_var}/log/%{name}/radacct
+%attr(771,root,radius) %dir %{_var}/log/%{name}
+%attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
+%attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/*
