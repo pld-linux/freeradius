@@ -62,10 +62,8 @@ case "$1" in
 	;;
   reload)
 	msg_reloading RADIUS
-	busy
 	killproc "$RADIUSD" -HUP
 	RETVAL=$?
-	[ $RETVAL -eq 0 ] && ok || died
 	;;
   restart)
 	$0 stop
