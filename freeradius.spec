@@ -58,7 +58,7 @@ CFLAGS="%{rpmcflags}"
 #autoconf
 #automake -a -c
 
-%configure --localstatedir=%{_localstatedir} \
+%configure2_13 --localstatedir=%{_localstatedir} \
 	--with-threads \
 	--with-thread-pool \
 	--with-gnu-ld \
