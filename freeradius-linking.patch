@@ -1,0 +1,182 @@
+diff -dur freeradius-1.0.1.orig/src/lib/Makefile freeradius-1.0.1/src/lib/Makefile
+--- freeradius-1.0.1.orig/src/lib/Makefile	2004-05-28 09:20:14.000000000 +0200
++++ freeradius-1.0.1/src/lib/Makefile	2004-10-13 15:35:16.352063360 +0200
+@@ -40,7 +40,7 @@
+ 
+ $(TARGET).a: $(STATIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(LD) \
+-	-module -static $(CFLAGS) $^ -o $@ 
++	-static $(CFLAGS) $^ -lcrypt -o $@ 
+ 
+ 
+ ifneq ($(USE_SHARED_LIBS),yes)
+@@ -49,7 +49,7 @@
+ 
+ $(TARGET).la: $(DYNAMIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+-	-module $(LINK_MODE) $(CFLAGS) -o $@ -rpath $(libdir) $^ 
++	$(LINK_MODE) $(CFLAGS) -lcrypt -o $@ -rpath $(libdir) $^ 
+ 
+ static: $(TARGET).a
+ 
+diff -dur freeradius-1.0.1.orig/src/main/Makefile.in freeradius-1.0.1/src/main/Makefile.in
+--- freeradius-1.0.1.orig/src/main/Makefile.in	2004-06-02 18:17:06.000000000 +0200
++++ freeradius-1.0.1/src/main/Makefile.in	2004-10-13 15:35:16.353063344 +0200
+@@ -57,94 +57,94 @@
+ 		$(PTHREADLIB) $(LIBLTDL) $(LCRYPT)
+ 
+ radiusd.o: radiusd.c $(INCLUDES)  ../include/request_list.h ../include/modules.h ../include/modcall.h ../include/modpriv.h
+-	$(CC) $(CFLAGS) -c radiusd.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c radiusd.c
+ 
+ acct.o: acct.c $(INCLUDES) ../include/modules.h
+-	$(CC) $(CFLAGS) -c acct.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c acct.c
+ 
+ files.o: files.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c files.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c files.c
+ 
+ util.o: util.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c util.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c util.c
+ 
+ nas.o:  nas.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c nas.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c nas.c
+ 
+ log.o:  log.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c log.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c log.c
+ 
+ conffile.o: conffile.c $(INCLUDES) ../include/modules.h
+-	$(CC) $(CFLAGS) -c conffile.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c conffile.c
+ 
+ mainconfig.o: mainconfig.c $(INCLUDES) ../include/modules.h
+-	$(CC) $(CFLAGS) -c mainconfig.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c mainconfig.c
+ 
+ timestr.o: timestr.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c timestr.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c timestr.c
+ 
+ modules.o:  modules.c $(INCLUDES)
+-	$(CC) $(CFLAGS) $(VFLAGS) $(INCLTDL) -c modules.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(VFLAGS) $(INCLTDL) -c modules.c
+ 
+ modcall.o:  modcall.c $(INCLUDES)
+-	$(CC) $(CFLAGS) $(INCLTDL) -c modcall.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) $(INCLTDL) -c modcall.c
+ 
+ session.o:  session.c $(INCLUDES) ../include/modules.h
+-	$(CC) $(CFLAGS) -c session.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c session.c
+ 
+ request_list.o:  request_list.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c request_list.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c request_list.c
+ 
+ proxy.o:  proxy.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c proxy.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c proxy.c
+ 
+ exec.o:  exec.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c exec.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c exec.c
+ 
+ auth.o:  auth.c $(INCLUDES) ../include/modules.h
+-	$(CC) $(CFLAGS) -c auth.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c auth.c
+ 
+ valuepair.o:  valuepair.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c valuepair.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c valuepair.c
+ 
+ version.o: version.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -o version.o -c version.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -o version.o -c version.c
+ 
+ xlat.o: xlat.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -o xlat.o -c xlat.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -o xlat.o -c xlat.c
+ 
+ threads.o: threads.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -o threads.o -c threads.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -o threads.o -c threads.c
+ 
+ smux.o: smux.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -o smux.o -c smux.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -o smux.o -c smux.c
+ 
+ radius_snmp.o: radius_snmp.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -o radius_snmp.o -c radius_snmp.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -o radius_snmp.o -c radius_snmp.c
+ 
+ radclient: radclient.o ../lib/libradius.a
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radclient radclient.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radclient radclient.o $(LIBS)
+ 
+ radclient.o: radclient.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c radclient.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c radclient.c
+ 
+ radrelay: radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o ../lib/libradius.a
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radrelay radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radrelay radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
+ 
+ radrelay.o: radrelay.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c radrelay.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c radrelay.c
+ 
+ radwho.o: radwho.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c radwho.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c radwho.c
+ 
+ radwho: radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o
+-	$(CC) $(LDFLAGS) -o radwho radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o radwho radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
+ 
+ radzap.o: radzap.c $(INCLUDES)
+-	$(CC) $(CFLAGS) -c radzap.c
++	$(LIBTOOL) --mode=compile $(CC) $(CFLAGS) -c radzap.c
+ 
+ radzap: radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radzap radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radzap radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o $(LIBS)
+ 
+ clean:
+ 	rm -rf *.o *.so *~ $(BINARIES) .libs
+diff -dur freeradius-1.0.1.orig/src/modules/rlm_eap/Makefile.in freeradius-1.0.1/src/modules/rlm_eap/Makefile.in
+--- freeradius-1.0.1.orig/src/modules/rlm_eap/Makefile.in	2004-01-28 16:38:40.000000000 +0100
++++ freeradius-1.0.1/src/modules/rlm_eap/Makefile.in	2004-10-13 15:36:58.340017666 +0200
+@@ -3,7 +3,7 @@
+ HEADERS     = eap.h rlm_eap.h
+ RLM_CFLAGS  = $(INCLTDL) -I@srcdir@/libeap
+ CLIENTLIBS  = -Llibeap -leap -L../../lib -lradius
+-RLM_LIBS    = -Llibeap -leap
++RLM_LIBS    = $(top_builddir)/src/modules/rlm_eap/libeap/libeap.la
+ #RLM_LIBS    = $(shell for x in types/rlm_eap*/rlm_eap*.la;do echo -dlpreopen $$x;done)
+ RLM_INSTALL = install-types
+ RLM_SUBDIRS = libeap @eaptypes@ 
+diff -dur freeradius-1.0.1.orig/src/modules/rlm_eap/libeap/Makefile freeradius-1.0.1/src/modules/rlm_eap/libeap/Makefile
+--- freeradius-1.0.1.orig/src/modules/rlm_eap/libeap/Makefile	2003-10-29 03:49:18.000000000 +0100
++++ freeradius-1.0.1/src/modules/rlm_eap/libeap/Makefile	2004-10-13 15:35:16.354063327 +0200
+@@ -31,7 +31,7 @@
+ 
+ $(TARGET).a: $(STATIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(LD) \
+-	-module -static $(CFLAGS) $^ -o $@ 
++	-static $(CFLAGS) $^ -o $@ 
+ 
+ 
+ ifneq ($(USE_SHARED_LIBS),yes)
+@@ -40,7 +40,7 @@
+ 
+ $(TARGET).la: $(DYNAMIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+-	-module $(LINK_MODE) $(CFLAGS) -o $@ -rpath $(libdir) $^ 
++	$(LINK_MODE) $(CFLAGS) -o $@ -rpath $(libdir) $^ 
+ 
+ static: $(TARGET).a
+ 
