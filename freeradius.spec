@@ -1,4 +1,3 @@
-%include	/usr/lib/rpm/macros.python
 %include	/usr/lib/rpm/macros.perl
 # FIXME: won't be good to include these contrib examples?
 # Source1:	http://www.ping.de/~fdc/radius/radacct-replay
