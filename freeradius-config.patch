@@ -1,0 +1,14 @@
+diff -dur freeradius-1.0.1.orig/raddb/radiusd.conf.in freeradius-1.0.1/raddb/radiusd.conf.in
+--- freeradius-1.0.1.orig/raddb/radiusd.conf.in	2004-10-13 11:29:16.000000000 +0200
++++ freeradius-1.0.1/raddb/radiusd.conf.in	2004-10-13 11:49:08.318567276 +0200
+@@ -106,8 +106,8 @@
+ #  that the debugging mode server is running as a user that can read the
+ #  shadow info, and the user listed below can not.
+ #
+-#user = nobody
+-#group = nobody
++user = radius
++group = radius
+ 
+ #  max_request_time: The maximum time (in seconds) to handle a request.
+ #
