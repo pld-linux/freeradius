@@ -7,18 +7,24 @@
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	0.9.2
+Version:	0.9.3
 Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	b5e8cc41f112633b594de944f3e956b5
+# Source0-md5:	36f33d9dd305a2c9f1089c30a9fff0b8
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
+Patch0:		%{name}-ac.patch
+Patch1:		%{name}-rlm_smb-overflow.patch
 URL:		http://www.freeradius.org/
-#BuildRequires:	gdbm-devel
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	cyrus-sasl-devel
+BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
+BuildRequires:	libtool
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
 BuildRequires:	openssl-devel >= 0.9.7c
@@ -54,12 +60,34 @@ bardziej podatny na konfiguracjê.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
+
+tail +3614 aclocal.m4 > acinclude.m4
 
 %build
-touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
-
-%configure2_13 \
-	--with-system-libtool \
+maindir="$(pwd)"
+for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
+	rlm_eap/types/rlm_eap_{md5,tls} rlm_eap rlm_example \
+	rlm_ippool rlm_krb5 rlm_ldap rlm_pam rlm_perl rlm_python \
+	rlm_radutmp rlm_smb \
+	rlm_sql/drivers/rlm_sql_{db2,iodbc,mysql,oracle,postgresql,unixodbc} \
+	rlm_sql rlm_sqlcounter \
+	rlm_unix rlm_x99_token ; do
+	cd src/modules/${d}
+	%{__aclocal} -I ${maindir}
+	%{__autoconf}
+	if [ -f config.h.in ]; then
+		%{__autoheader}
+	fi
+	cd ${maindir}
+done
+#touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
+%{__libtoolize}
+%{__aclocal}
+%{__autoconf}
+%{__autoheader}
+%configure \
 	--enable-strict-dependencies \
 	--with-logdir=%{_var}/log/freeradius \
 	--with-experimental-modules \
@@ -88,6 +116,10 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/raddb/{clients,*.pl}
 install %{SOURCE1}	$RPM_BUILD_ROOT/etc/logrotate.d/%{name}
 install %{SOURCE2}	$RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE3}	$RPM_BUILD_ROOT/etc/pam.d/radius
+
+# remove useless static modules and library
+# rlm*.la are used (lt_dlopen)
+rm -f $RPM_BUILD_ROOT%{_libdir}/{*.a,libradius.la}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -130,6 +162,7 @@ fi
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
 %{_libdir}/*.la
+%{_datadir}/freeradius
 
 %dir %{_sysconfdir}/raddb
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/raddb/*

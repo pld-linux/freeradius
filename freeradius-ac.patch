@@ -1,0 +1,327 @@
+--- freeradius-0.9.3/configure.in.orig	2003-11-20 21:15:47.000000000 +0100
++++ freeradius-0.9.3/configure.in	2003-11-27 22:11:37.079670416 +0100
+@@ -68,20 +68,8 @@
+ dnl libltdl is installable
+ AC_LIBLTDL_INSTALLABLE
+ 
+-dnl use system-wide libtool, if it exists
+-AC_ARG_WITH(system-libtool, 
+-[  --with-system-libtool              try to use libtool installed in your system [default=use our own]],
+-[ AC_PATH_PROG(LIBTOOL, libtool,,$PATH:/usr/local/bin) ],
+-[
+-  LIBTOOL="`pwd`/libtool"
+-  AC_SUBST(LIBTOOL)
+-  dnl ensure that we're looking for dlopen
+-  AC_LIBTOOL_DLOPEN
+-
+-  dnl Figure out how to build shared libraries
+-  AC_PROG_LIBTOOL
+-])
+-
++AC_PROG_LIBTOOL
++AC_LIBTOOL_DLOPEN
+ 
+ dnl Put this in later, when all distributed modules use autoconf.
+ dnl AC_ARG_WITH(disablemodulefoo,
+@@ -388,15 +376,15 @@
+ fi
+ 
+ dnl Check if we need -lsocket
+-AC_CHECK_LIB(socket, getsockname)
++AC_SEARCH_LIBS(getsockname, socket)
+ 
+ dnl Check for -lresolv
+ dnl This library may be needed later.
+-AC_CHECK_LIB(resolv, inet_aton)
++AC_SEARCH_LIBS(inet_aton, resolv)
+ 
+ dnl Check if we need -lnsl. Usually if we want to
+ dnl link against -lsocket we need to include -lnsl as well.
+-AC_CHECK_LIB(nsl, inet_ntoa)
++AC_SEARCH_LIBS(inet_ntoa, nsl)
+ 
+ dnl #############################################################
+ dnl #
+@@ -889,7 +878,7 @@
+ AC_SUBST(RADIUSD_VERSION)
+ export CFLAGS LIBS
+ 
+-AC_OUTPUT(\
++AC_CONFIG_FILES(\
+ 	./Make.inc \
+ 	./src/include/build-radpaths-h \
+ 	./src/main/Makefile \
+@@ -906,14 +895,15 @@
+ 	./raddb/radiusd.conf
+ )
+ 
+-AC_OUTPUT_COMMANDS([echo timestamp > src/include/stamp-h])
+-AC_OUTPUT_COMMANDS([(cd ./src/include && /bin/sh ./build-radpaths-h)])
+-AC_OUTPUT_COMMANDS([(cd ./src/main   && chmod +x checkrad.pl radlast radtest)])
+-AC_OUTPUT_COMMANDS([(cd ./scripts    && chmod +x rc.radiusd radwatch check-radiusd-config radiusd.cron.daily radiusd.cron.monthly cryptpasswd)])
+-AC_OUTPUT_COMMANDS([
++AC_CONFIG_COMMANDS(c1,[echo timestamp > src/include/stamp-h])
++AC_CONFIG_COMMANDS(c2,[(cd ./src/include && /bin/sh ./build-radpaths-h)])
++AC_CONFIG_COMMANDS(c3,[(cd ./src/main   && chmod +x checkrad.pl radlast radtest)])
++AC_CONFIG_COMMANDS(c4,[(cd ./scripts    && chmod +x rc.radiusd radwatch check-radiusd-config radiusd.cron.daily radiusd.cron.monthly cryptpasswd)])
++AC_CONFIG_COMMANDS(c5,[
+ cat >> src/include/autoconf.h <<EOF
+ 
+ #define HOSTINFO	"$host"
+ #define RADIUSD_VERSION "$RADIUSD_VERSION"
+ EOF
+ ],host=$host)
++AC_OUTPUT
+--- freeradius-0.9.3/src/modules/rlm_ippool/configure.in.orig	1970-01-01 01:00:00.000000000 +0100
++++ freeradius-0.9.3/src/modules/rlm_ippool/configure.in	2003-11-27 22:33:07.000000000 +0100
+@@ -0,0 +1,72 @@
++AC_INIT(rlm_ippool.c)
++AC_REVISION($Revision$)
++AC_DEFUN(modname,[rlm_ippool])
++
++if test x$with_[]modname != xno; then
++
++	AC_PROG_CC
++	AC_PROG_CPP
++
++	AC_SMART_CHECK_INCLUDE(gdbm.h)
++	AC_SMART_CHECK_LIB(gdbm, gdbm_open)
++	if test "x$ac_cv_lib_gdbm_gdbm_open" != "xyes"; then
++		fail="$fail libgdbm"
++	fi
++
++	if test "x$fail" = "x"; then
++		AC_MSG_CHECKING(to see GDBM_SYNC status)
++		AC_EGREP_CPP(found-gdbm-sync, [
++#include <gdbm.h>
++#ifdef GDBM_SYNC
++	found-gdbm-sync!
++#else
++	not found.  this version must use sync by default.
++#endif
++			], [
++			AC_DEFINE(NEED_GDBM_SYNC, yes) 
++			AC_MSG_RESULT(needs it.)
++			], [
++			AC_MSG_RESULT(SYNCs by default.)
++			]
++		)
++	fi
++
++	old_LIBS=$LIBS
++	LIBS="$LIBS $SMART_LIBS"
++	AC_CHECK_FUNC(gdbm_fdesc)
++	if test "x$ac_cv_func_gdbm_fdesc" = "xyes";
++	then
++		AC_DEFINE(HAVE_GDBM_FDESC)
++	fi
++	LIBS=$old_LIBS
++
++	targetname=modname
++else
++	targetname=
++	echo \*\*\* module modname is disabled.
++fi
++
++if test x"$fail" != x""; then
++	if test x"${enable_strict_dependencies}" = x"yes"; then
++		AC_MSG_ERROR([set --without-]modname[ to disable it explicitly.])
++	else
++		AC_MSG_WARN([silently not building ]modname[.])
++		AC_MSG_WARN([FAILURE: ]modname[ requires: $fail.]); 
++		targetname=""
++	fi
++fi
++
++if test x"$targetname" != x""; then
++	ippool_utils="rlm_ippool_tool"
++	ippool_install="rlm_ippool_install"
++fi
++
++ippool_ldflags=$SMART_LIBS
++ippool_cflags=$SMART_CFLAGS
++AC_SUBST(ippool_ldflags)
++AC_SUBST(ippool_cflags)
++AC_SUBST(targetname)
++AC_SUBST(ippool_utils)
++AC_SUBST(ippool_install)
++AC_CONFIG_HEADER(config.h)
++AC_OUTPUT(Makefile)
+--- freeradius-0.9.3/Make.inc.in.orig	2003-01-27 19:21:28.000000000 +0100
++++ freeradius-0.9.3/Make.inc.in	2003-11-27 22:57:52.773700784 +0100
+@@ -49,7 +49,7 @@
+ RADIR		= ${radacctdir}
+ 
+ LIBLTDL		= @LIBLTDL@
+-LIBLTDLPATH	= @LIBLTDLPATH@
++LIBLTDLPATH	=
+ INCLTDL		= @INCLTDL@
+ 
+ USE_SHARED_LIBS	= @USE_SHARED_LIBS@
+--- freeradius-0.9.3/src/lib/Makefile.orig	2003-11-28 20:18:57.678459104 +0100
++++ freeradius-0.9.3/src/lib/Makefile	2003-11-28 20:20:25.055175824 +0100
+@@ -33,8 +33,8 @@
+ 
+ 
+ $(TARGET).a: $(STATIC_OBJS)
+-	$(LIBTOOL) --mode=link $(LD) \
+-	-module -static $(CFLAGS) $^ -o $@ 
++	$(LIBTOOL) --mode=link $(CC) \
++	-avoid-version -static $(CFLAGS) $^ -o $@ 
+ 
+ 
+ ifneq ($(USE_SHARED_LIBS),yes)
+@@ -43,7 +43,7 @@
+ 
+ $(TARGET).la: $(DYNAMIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+-	-module $(LINK_MODE) $(CFLAGS) -o $@ -rpath $(libdir) $^ 
++	-avoid-version $(LINK_MODE) $(CFLAGS) -o $@ -rpath $(libdir) $^ -lcrypt
+ 
+ static: $(TARGET).a
+ 
+--- freeradius-0.9.3/src/modules/rules.mak.orig	2003-07-09 17:19:53.000000000 +0200
++++ freeradius-0.9.3/src/modules/rules.mak	2003-11-27 23:54:25.378946392 +0100
+@@ -69,7 +69,7 @@
+ #
+ #######################################################################
+ $(TARGET).a: $(STATIC_OBJS)
+-	$(LIBTOOL) --mode=link $(LD) \
++	$(LIBTOOL) --mode=link $(CC) \
+ 	-module -static $(CFLAGS) $(RLM_CFLAGS) $^ -o $@ 
+ 
+ #
+--- freeradius-0.9.3/src/modules/rlm_dbm/Makefile.in.orig	2001-10-26 18:59:38.000000000 +0200
++++ freeradius-0.9.3/src/modules/rlm_dbm/Makefile.in	2003-11-28 19:54:12.484242944 +0100
+@@ -8,10 +8,10 @@
+ 
+ include ../rules.mak
+ 
+-rlm_dbm_parser: rlm_dbm_parser.o ../../lib/libradius.a
++rlm_dbm_parser: rlm_dbm_parser.o ../../lib/libradius.la
+ 	$(LIBTOOL) --mode=link $(CC) $^ $(LIBS) $(RLM_LIBS) -o $@
+ 
+-rlm_dbm_cat: rlm_dbm_cat.o ../../lib/libradius.a
++rlm_dbm_cat: rlm_dbm_cat.o ../../lib/libradius.la
+ 	$(LIBTOOL) --mode=link $(CC) $^ $(LIBS) $(RLM_LIBS) -o $@
+ 
+ #
+--- freeradius-0.9.3/src/modules/rlm_mschap/Makefile.orig	2003-03-26 23:58:09.000000000 +0100
++++ freeradius-0.9.3/src/modules/rlm_mschap/Makefile	2003-11-28 19:55:21.097812096 +0100
+@@ -13,8 +13,8 @@
+ $(DYNAMIC_OBJS): $(HEADERS)
+ 
+ smbencrypt: smbencrypt.o $(HEADERS)
+-	$(CC) -I../../include $(LDFLAGS) -o smbencrypt smbencrypt.o ../../lib/libradius.a
++	$(LIBTOOL) --mode=link $(CC) -I../../include $(LDFLAGS) -o smbencrypt smbencrypt.o ../../lib/libradius.la
+ 
+ smbencrypt-install:
+ 	$(INSTALL) -d -m 755 $(R)$(bindir)
+-	$(INSTALL) -m 755 $(INSTALLSTRIP) smbencrypt $(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(INSTALLSTRIP) smbencrypt $(R)$(bindir)
+--- freeradius-0.9.3/src/modules/rlm_sql/drivers/rules.mak.orig	2003-06-05 22:16:54.000000000 +0200
++++ freeradius-0.9.3/src/modules/rlm_sql/drivers/rules.mak	2003-11-28 20:31:56.277094120 +0100
+@@ -67,7 +67,7 @@
+ #
+ #######################################################################
+ $(TARGET).a: $(STATIC_OBJS)
+-	$(LIBTOOL) --mode=link $(LD) -module -static $(CFLAGS) $(RLM_SQL_CFLAGS) $^ -o $@ 
++	$(LIBTOOL) --mode=link $(CC) -module -static $(CFLAGS) $(RLM_SQL_CFLAGS) $^ -o $@ 
+ 
+ #
+ #  If the module is in the list of static modules, then the "dynamic"
+--- freeradius-0.9.3/src/main/Makefile.in.orig	2003-05-01 20:57:23.000000000 +0200
++++ freeradius-0.9.3/src/main/Makefile.in	2003-11-28 21:00:46.608043832 +0100
+@@ -12,7 +12,7 @@
+ 
+ CFLAGS		+= -I../include $(SNMP_INCLUDE) 
+ LDFLAGS		+= -L../lib
+-LIBS		+= -lradius $(SNMP_LIBS)
++LIBS		+= ../lib/libradius.la $(SNMP_LIBS)
+ MODULE_LIBS	= $(STATIC_MODULES)
+ MODULE_OBJS	=
+ VFLAGS		= -DRADIUSD_MAJOR_VERSION=$(RADIUSD_MAJOR_VERSION)
+@@ -30,7 +30,7 @@
+ 
+ all:	$(BINARIES)
+ 
+-radiusd: $(SERVER_OBJS) ../lib/libradius.a $(MODULE_OBJS)
++radiusd: $(SERVER_OBJS) ../lib/libradius.la $(MODULE_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -export-dynamic -dlopen self \
+ 		$(CFLAGS) $(LDFLAGS) -o $@ \
+ 		$(SERVER_OBJS) $(LCRYPT) $(LIBS) \
+@@ -102,14 +102,14 @@
+ radius_snmp.o: radius_snmp.c $(INCLUDES)
+ 	$(CC) $(CFLAGS) -o radius_snmp.o -c radius_snmp.c
+ 
+-radclient: radclient.o ../lib/libradius.a
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radclient radclient.o $(LIBS)
++radclient: radclient.o ../lib/libradius.la
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radclient radclient.o $(LIBS)
+ 
+ radclient.o: radclient.c $(INCLUDES)
+ 	$(CC) $(CFLAGS) -c radclient.c
+ 
+-radrelay: radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o ../lib/libradius.a
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radrelay radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
++radrelay: radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o ../lib/libradius.la
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radrelay radrelay.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
+ 
+ radrelay.o: radrelay.c $(INCLUDES)
+ 	$(CC) $(CFLAGS) -c radrelay.c
+@@ -118,24 +118,24 @@
+ 	$(CC) $(CFLAGS) -c radwho.c
+ 
+ radwho: radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o
+-	$(CC) $(LDFLAGS) -o radwho radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o radwho radwho.o mainconfig.o util.o nas.o client.o log.o conffile.o files.o xlat.o $(LIBS)
+ 
+ radzap.o: radzap.c $(INCLUDES)
+ 	$(CC) $(CFLAGS) -c radzap.c
+ 
+ radzap: radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o radzap radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o radzap radzap.o mainconfig.o util.o nas.o log.o client.o conffile.o files.o xlat.o $(LIBS)
+ 
+ clean:
+ 	rm -rf *.o *.so *~ $(BINARIES) .libs
+ 
+ install:
+ 	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(INSTALLSTRIP) radiusd	$(R)$(sbindir)
+-	$(INSTALL) -m 755 $(INSTALLSTRIP) radwho		$(R)$(bindir)
+-	$(INSTALL) -m 755 $(INSTALLSTRIP) radzap		$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(INSTALLSTRIP) radwho		$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(INSTALLSTRIP) radzap		$(R)$(bindir)
+ 	$(INSTALL) -m 755    radlast		$(R)$(bindir)
+-	$(INSTALL) -m 755    radclient		$(R)$(bindir)
+-	$(INSTALL) -m 755    radrelay		$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755    radclient		$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755    radrelay		$(R)$(bindir)
+ 	$(INSTALL) -m 755    radtest 		$(R)$(bindir)
+ 	$(INSTALL) -d -m 755			$(R)$(logdir)
+ 	$(INSTALL) -d -m 755			$(R)$(radacctdir)
+--- freeradius-0.9.3/Make.inc.in.orig	2003-11-27 22:58:15.000000000 +0100
++++ freeradius-0.9.3/Make.inc.in	2003-11-27 23:07:23.083000592 +0100
+@@ -18,8 +18,8 @@
+ logdir		= @logdir@
+ raddbdir	= @raddbdir@
+ radacctdir	= @radacctdir@
+-top_builddir	= @top_builddir@
+-top_srcdir	= @top_srcdir@
++top_builddir	= @xxx_top_builddir@
++top_srcdir	= @top_srcdir@
+ 
+ MAKE		= @MAKE@
+ CC		= @CC@
+--- freeradius-0.9.3/configure.in.orig	2003-11-27 22:58:15.000000000 +0100
++++ freeradius-0.9.3/configure.in	2003-11-27 23:08:10.301822240 +0100
+@@ -795,7 +795,8 @@
+ top_builddir=`pwd`
+ export top_builddir
+ AC_MSG_RESULT([top_builddir=$top_builddir])
+-AC_SUBST(top_builddir)
++xxx_top_builddir="$top_builddir"
++AC_SUBST(xxx_top_builddir)
+ AC_SUBST(LIBLTDL)
+ AC_SUBST(INCLTDL)
+ 
