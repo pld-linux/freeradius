@@ -4,11 +4,12 @@ Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS.
 Name:		freeradius
 Version:	0.1
 Release:	0
-URL:		http://www.freeradius.org/
 License:	GPL
 Group:		Networking/Daemons
 Group(de):	Netzwerkwesen/Server
 Group(pl):	Sieciowe/Serwery
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
+URL:		http://www.freeradius.org/
 Prereq:		/sbin/chkconfig
 # FIXME: snmpwalk, snmpget and rusers POSSIBLY needed by checkrad
 Requires:	libtool
@@ -18,8 +19,8 @@ BuildRequires:	openldap-devel
 BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	pam-devel
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	cistron-radius
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
 
 %define         _localstatedir  /var/radius
 
@@ -93,18 +94,16 @@ install radiusd-logrotate $RPM_BUILD_ROOT/etc/logrotate.d/radiusd
 install radiusd-pam       $RPM_BUILD_ROOT/etc/pam.d/radius
 cd ..
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/chkconfig --add radiusd.init
+
 %preun
 if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del radiusd.init
 fi
-
-%postin
-if [ "$1" = "0" ]; then
-	/sbin/chkconfig --add radiusd.init
-fi
-
-%clean
-%{__rm} -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
