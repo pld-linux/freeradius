@@ -1,5 +1,5 @@
-%include        /usr/lib/rpm/macros.python
-%include        /usr/lib/rpm/macros.perl
+%include	/usr/lib/rpm/macros.python
+%include	/usr/lib/rpm/macros.perl
 # FIXME: won't be good to include these contrib examples?
 # Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 # Source2:	http://www.ping.de/~fdc/radius/radlast-0.03
@@ -38,7 +38,7 @@ Requires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	cistron-radius
 
-%define         _localstatedir  %{_var}/lib/freeradius
+%define		_localstatedir	%{_var}/lib/freeradius
 
 %description
 The FreeRADIUS Server Project is an attempt to create a
@@ -93,33 +93,33 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`id -u radius 2>/dev/null`" ]; then
-        if [ "`id -u radius`" != "29" ]; then
-                echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
-                exit 1
-        fi
+	if [ "`id -u radius`" != "29" ]; then
+		echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
+		exit 1
+	fi
 else
-        /usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g nobody radius 1>&2
+	/usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g nobody radius 1>&2
 fi
 
 %post
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
-        /etc/rc.d/init.d/%{name} restart 1>&2
+	/etc/rc.d/init.d/%{name} restart 1>&2
 else
-        echo "Run \"/etc/rc.d/init.d/%{name} start\" to start %{name} daemon."
+	echo "Run \"/etc/rc.d/init.d/%{name} start\" to start %{name} daemon."
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/%{name} ]; then
-                /etc/rc.d/init.d/%{name} stop 1>&2
-        fi
-        /sbin/chkconfig --del %{name}
+	if [ -f /var/lock/subsys/%{name} ]; then
+		/etc/rc.d/init.d/%{name} stop 1>&2
+	fi
+	/sbin/chkconfig --del %{name}
 fi
 
 %postun
 if [ "$1" = "0" ]; then
-        /usr/sbin/userdel %{name}
+	/usr/sbin/userdel %{name}
 fi
 
 %files
