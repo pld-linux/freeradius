@@ -42,7 +42,6 @@ BuildRequires:	python-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpm-pythonprov
 PreReq:		rc-scripts
 Requires(post,preun):	/sbin/chkconfig
 Requires:	libtool
