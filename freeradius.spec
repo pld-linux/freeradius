@@ -29,8 +29,6 @@ Obsoletes:	cistron-radius
 # Source2:	http://www.ping.de/~fdc/radius/radlast-0.03
 # Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
 
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
 %description
 The FreeRADIUS Server Project is an attempt to create a
 high-performance and highly configurable GPL'd RADIUS server. It is
@@ -112,7 +110,7 @@ fi
 %config /etc/logrotate.d/radiusd
 %config /etc/rc.d/init.d/radiusd
 %config %{_sysconfdir}/raddb/*
-%{_prefix}/man/*
+%{_mandir}/*
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %{_libdir}/*
