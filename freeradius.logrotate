@@ -1,0 +1,55 @@
+# You can use this to rotate the /var/log/freeradius/* files, simply copy
+# it to /etc/logrotate.d/radiusd
+
+# Last part should reload the server
+
+/var/log/freeradius/radacct/*/detail {
+	monthly
+	rotate 4
+	create
+	missingok
+	compress
+}
+
+/var/log/freeradius/checkrad.log {
+	monthly
+	rotate 4
+	create
+	missingok
+	compress
+}
+
+/var/log/freeradius/radius.log {
+	monthly
+	rotate 4
+	create
+	missingok
+	compress
+}
+
+/var/log/freeradius/radwatch.log {
+	monthly
+	rotate 4
+	create
+	missingok
+	compress
+}
+
+/var/log/freeradius/radutmp {
+	monthly
+	rotate 4
+	create
+	compress
+	missingok
+}
+
+/var/log/freeradius/radwtmp {
+	monthly
+	rotate 4
+	create
+	compress
+	missingok
+	postrotate
+		/etc/rc.d/init.d/radiusd condrestart
+	endscript
+}
