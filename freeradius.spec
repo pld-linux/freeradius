@@ -1,6 +1,6 @@
 # FIXME: find a way of getting rid of "-" on versions ... rpm will be happy
 Summary:	High-performance and highly configurable RADIUS server
-Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS.
+Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	0.1
 Release:	0
@@ -35,7 +35,7 @@ high-performance and highly configurable GPL'd RADIUS server. It is
 generally similar to the Livingston 2.0 RADIUS server, but has a lot
 more features, and is much more configurable.
 
-%description(pl)
+%description -l pl
 Projekt FreeRadius ma na celu stworzenie szybkiego i wysoce
 konfigurowalnego serwera RADIUS na licencji GPL. Ten jest podobny do
 Livingston 2.0 RADIUS server ale ma o wiele wiêcej ficzersów i jest
@@ -50,7 +50,6 @@ bardziej podatny na konfiguracjê.
 #cd ..
 
 %build
-CFLAGS="%{rpmcflags}" 
 #libtoolize --copy --force
 #aclocal
 #autoconf
@@ -84,13 +83,15 @@ done
 
 
 # remove unneeded stuff
-%{__rm} -f $RPM_BUILD_ROOT%{_prefix}/{man/man8/builddbm.8,sbin/rc.radiusd}
+rm -f $RPM_BUILD_ROOT%{_prefix}/{man/man8/builddbm.8,sbin/rc.radiusd}
 
 cd redhat
 install -m 555 rc.radiusd-redhat $RPM_BUILD_ROOT/etc/rc.d/init.d/radiusd
 install radiusd-logrotate $RPM_BUILD_ROOT/etc/logrotate.d/radiusd
 install radiusd-pam       $RPM_BUILD_ROOT/etc/pam.d/radius
 cd ..
+
+gzip -9nf doc/ChangeLog doc/README* COPYRIGHT
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -105,7 +106,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc doc/ChangeLog doc/README* todo/ COPYRIGHT INSTALL
+%doc doc/ChangeLog.gz doc/README*.gz todo COPYRIGHT.gz
 %config /etc/pam.d/radius
 %config /etc/logrotate.d/radiusd
 %config /etc/rc.d/init.d/radiusd
