@@ -24,7 +24,7 @@
 . /etc/rc.d/init.d/functions
 
 RADIUSD=/usr/sbin/radiusd
-LOCKF=/var/lock/subsys/radiusd
+LOCKF=/var/lock/subsys/freeradius
 CONFIG=/etc/raddb/radiusd.conf
 
 [ -f "$RADIUSD" ] || exit 0
