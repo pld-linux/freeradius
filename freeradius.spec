@@ -2,13 +2,12 @@
 %include	/usr/lib/rpm/macros.perl
 # FIXME: won't be good to include these contrib examples?
 # Source1:	http://www.ping.de/~fdc/radius/radacct-replay
-# Source2:	http://www.ping.de/~fdc/radius/radlast-0.03
 # Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.0.1
-Release:	0.2
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
