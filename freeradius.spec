@@ -82,7 +82,7 @@ rm -f $RPM_BUILD_ROOT{%{_mandir}/man8/builddbm.8,%{_sbindir}/rc.radiusd}
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/raddb/{clients,*.pl}
 
 install %{SOURCE1}	$RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/%{name}
-install %{SOURCE2}	$RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/%{name}
+install %{SOURCE2}	$RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE3}	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/radius
 
 %clean
@@ -133,7 +133,7 @@ fi
 %dir %{_var}/log/%{name}
 %dir %{_var}/log/%{name}/radacct
 
-%attr(754,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/pam.d/*
 %attr(640,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/*
 
