@@ -107,9 +107,9 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/ChangeLog.gz doc/README*.gz todo COPYRIGHT.gz
-%config /etc/pam.d/radius
-%config /etc/logrotate.d/radiusd
-%config /etc/rc.d/init.d/radiusd
+%config(noreplace) %verify(not size mtime md5) /etc/pam.d/radius
+%config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/radiusd
+%config(noreplace) %verify(not size mtime md5) /etc/rc.d/init.d/radiusd
 %config %{_sysconfdir}/raddb/*
 %{_mandir}/*
 %attr(755,root,root) %{_bindir}/*
