@@ -1,7 +1,4 @@
 #
-# TODO:
-# - SECURITY: http://securitytracker.com/alerts/2004/Sep/1011364.html
-#
 %include	/usr/lib/rpm/macros.perl
 # FIXME: won't be good to include these contrib examples?
 # Source1:	http://www.ping.de/~fdc/radius/radacct-replay
@@ -10,19 +7,25 @@
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	0.9.3
-Release:	2
+Version:	1.0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	36f33d9dd305a2c9f1089c30a9fff0b8
+# Source0-md5:	abc30cb71367f859ceed4de6477cd59f
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
-Patch0:		%{name}-ac.patch
-Patch1:		%{name}-rlm_smb-overflow.patch
-Patch2:		%{name}-netsnmp.patch
+Patch0:		%{name}-autoconf_mysql.patch
+Patch1:		%{name}-makefile.patch
+Patch2:		%{name}-smbencrypt.patch
+Patch3:		%{name}-linking.patch
+Patch4:		%{name}-moduledir.patch
+Patch5:		%{name}-rundir.patch
+Patch6:		%{name}-config.patch
 URL:		http://www.freeradius.org/
+Provides:	user(radius)
+Provides:	group(radius)
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	cyrus-sasl-devel
@@ -47,8 +50,6 @@ Requires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	cistron-radius
 
-%define		_localstatedir	%{_var}/lib/freeradius
-
 %description
 The FreeRADIUS Server Project is an attempt to create a
 high-performance and highly configurable GPL'd RADIUS server. It is
@@ -65,18 +66,26 @@ bardziej podatny na konfiguracjê.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-tail -n +3614 aclocal.m4 > acinclude.m4
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+
+awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
+	< aclocal.m4 > acinclude.m4
+
+find . -type d -name CVS | xargs rm -r
 
 %build
 maindir="$(pwd)"
 for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
-	rlm_eap/types/rlm_eap_{md5,tls} rlm_eap rlm_example \
-	rlm_ippool rlm_krb5 rlm_ldap rlm_pam rlm_perl rlm_python \
+	rlm_eap/types/rlm_eap_{md5,mschapv2,peap,sim,tls,ttls} \
+	rlm_eap rlm_example rlm_ippool rlm_krb5 rlm_ldap rlm_pam rlm_perl rlm_python \
 	rlm_radutmp rlm_smb \
 	rlm_sql/drivers/rlm_sql_{db2,iodbc,mysql,oracle,postgresql,unixodbc} \
-	rlm_sql rlm_sqlcounter \
-	rlm_unix rlm_x99_token ; do
+	rlm_sql rlm_sqlcounter rlm_unix rlm_x99_token ; do
+
 	cd src/modules/${d}
 	%{__aclocal} -I ${maindir}
 	%{__autoconf}
@@ -85,7 +94,6 @@ for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
 	fi
 	cd ${maindir}
 done
-#touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
 %{__libtoolize}
 %{__aclocal}
 %{__autoconf}
@@ -104,15 +112,17 @@ done
 	--disable-ltdl-install \
 	--without-rlm_krb5 \
 	--without-rlm_dbm
-%{__make}
+%{__make} \
+	LIBTOOL="`pwd`/libtool --tag=CC"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/raddb \
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/raddb,%{_libdir}/%{name}} \
 	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,rc.d/init.d} \
 	$RPM_BUILD_ROOT%{_var}/log/radius
 
 %{__make} install \
+	LIBTOOL="`pwd`/libtool --tag=CC" \
 	R=$RPM_BUILD_ROOT
 
 rm -f $RPM_BUILD_ROOT{%{_mandir}/man8/builddbm.8,%{_sbindir}/rc.radiusd}
@@ -125,18 +135,35 @@ install %{SOURCE3}	$RPM_BUILD_ROOT/etc/pam.d/radius
 # remove useless static modules and library
 # rlm*.la are used (lt_dlopen)
 rm -f $RPM_BUILD_ROOT%{_libdir}/{*.a,libradius.la}
+rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/{*.a,libradius.la}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
+if [ -n "`/usr/bin/getgid radius`" ]; then
+	if [ "`getgid radius`" != "29" ]; then
+		echo "Error: group radius doesn't have gid=29. Correct this before installing radius." 1>&2
+		exit 1
+	fi
+else
+	/usr/sbin/groupadd -g 29 -r -f radius
+	if [ -n "`id -u radius 2>/dev/null`" ]; then
+		# upgrade from previous versions of the package, where radius' gid was "nobody"
+		if [ "`id -g radius`" = "99" ]; then
+			usermod -g 29 radius
+			chown radius:radius /var/log/%{name}/*.log >/dev/null 2>&1 || :
+			chown radius:radius /var/log/%{name}/radacct/* >/dev/null 2>&1 || :
+		fi
+	fi
+fi
 if [ -n "`id -u radius 2>/dev/null`" ]; then
 	if [ "`id -u radius`" != "29" ]; then
 		echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g nobody radius 1>&2
+	/usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g radius radius 1>&2
 fi
 
 %post
@@ -157,7 +184,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	/usr/sbin/userdel %{name}
+	%userremove radius
+	%groupremove radius
 fi
 
 %files
@@ -168,6 +196,9 @@ fi
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
 %{_libdir}/*.la
+%dir %{_libdir}/%{name}
+%{_libdir}/%{name}/*.so
+%{_libdir}/%{name}/*.la
 %{_datadir}/freeradius
 
 %dir %{_sysconfdir}/raddb
