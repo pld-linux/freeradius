@@ -27,14 +27,14 @@ BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
-BuildRequires:	openssl-devel >= 0.9.7c
+BuildRequires:	openssl-devel
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-backend-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
-BuildRequires:	net-snmp-devel
-BuildRequires:	net-snmp-utils
+BuildRequires:	ucd-snmp-devel
+BuildRequires:	ucd-snmp-utils
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
@@ -158,6 +158,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/*
+%doc src/modules/rlm_sql/drivers/*/*.sql
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
