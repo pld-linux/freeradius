@@ -17,8 +17,6 @@ Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
 URL:		http://www.freeradius.org/
-Prereq:                /sbin/chkconfig
-Requires:	libtool
 BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	mysql-devel
@@ -34,6 +32,9 @@ BuildRequires:	ucd-snmp-utils
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
+PreReq:		rc-scripts
+Requires(post,preun):	/sbin/chkconfig
+Requires:	libtool
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	cistron-radius
 
@@ -73,8 +74,9 @@ touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/{logrotate.d,pam.d,rc.d/init.d,raddb}
-install -d $RPM_BUILD_ROOT%{_var}/log/radius
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/raddb \
+	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,rc.d/init.d} \
+	$RPM_BUILD_ROOT%{_var}/log/radius
 
 %{__make} install \
 	R=$RPM_BUILD_ROOT
