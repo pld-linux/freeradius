@@ -39,7 +39,7 @@ konfigurowalnego serwera RADIUS na licencji GPL. Ten jest podobny do
 Livingston 2.0 RADIUS server ale ma o wiele wiêcej ficzersów i jest
 bardziej podatny na konfiguracjê.
 
-%prep 
+%prep
 %setup -q
 
 # FIXME: some folks prefer -dist files ... rename them or not?
