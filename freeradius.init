@@ -27,35 +27,45 @@ RADIUSD=/usr/sbin/radiusd
 LOCKF=/var/lock/subsys/radiusd
 CONFIG=/etc/raddb/radiusd.conf
 
-[ -f $RADIUSD ] || exit 0
-[ -f $CONFIG ] || exit 0
+[ -f "$RADIUSD" ] || exit 0
+[ -f "$CONFIG" ] || exit 0
 
 RETVAL=0
 
 case "$1" in
   start)
-	echo -n $"Starting RADIUS server: "
-	daemon $RADIUSD -y
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && touch $LOCKF
+	# Check if the service is already running?
+	if [ ! -f "$LOCKF" ]; then
+		msg_starting RADIUS
+		daemon "$RADIUSD" -y
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch "$LOCKF"
+	else
+		msg_already_running RADIUS
+		exit 1
+	fi
 	;;
   stop)
-	echo -n $"Stopping RADIUS server: "
-	killproc $RADIUSD
-	RETVAL=$?
-	echo
-	[ $RETVAL -eq 0 ] && rm -f $LOCKF
+	# Stop daemons.
+	if [ -f "$LOCKF" ]; then
+		msg_stopping RADIUS
+		killproc "$RADIUSD"
+		rm -f "$LOCKF" > /dev/null 2>&1
+	else
+		msg_not_running RADIUS
+		exit 1
+	fi
 	;;
   status)
 	status radiusd
 	RETVAL=$?
-        ;;
+	;;
   reload)
-	echo -n $"Reloading RADIUS server: "
-	killproc $RADIUSD -HUP
+	msg_reloading RADIUS
+	busy
+	killproc "$RADIUSD" -HUP
 	RETVAL=$?
-	echo
+	[ $RETVAL -eq 0 ] && ok || died
 	;;
   restart)
 	$0 stop
@@ -72,7 +82,7 @@ case "$1" in
 	fi
 	;;
   *)
-	echo $"Usage: $0 {start|stop|status|restart|reload|condrestart}"
+	msg_usage "$0 {start|stop|restart|reload|condrestart|status}"
 	exit 1
 esac
 
