@@ -6,7 +6,7 @@
 /var/log/freeradius/radacct/*/detail {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	missingok
 	compress
 }
@@ -14,7 +14,7 @@
 /var/log/freeradius/checkrad.log {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	missingok
 	compress
 }
@@ -22,7 +22,7 @@
 /var/log/freeradius/radius.log {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	missingok
 	compress
 }
@@ -30,15 +30,18 @@
 /var/log/freeradius/radwatch.log {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	missingok
 	compress
 }
 
+
+
+# Should this really be rotated
 /var/log/freeradius/radutmp {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	compress
 	missingok
 }
@@ -46,7 +49,7 @@
 /var/log/freeradius/radwtmp {
 	monthly
 	rotate 4
-	create
+	create 660 root radius
 	compress
 	missingok
 	postrotate
