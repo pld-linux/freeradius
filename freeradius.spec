@@ -178,6 +178,6 @@ fi
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/*
-%attr(640,root,root) %config(noreplace) /etc/logrotate.d/*
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/*
 
 %{_mandir}/man?/*
