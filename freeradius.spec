@@ -18,7 +18,7 @@ BuildRequires:	mysql-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	pam-devel
 Obsoletes:	cistron-radius
-Source0:	freeradius-0.1.tar.gz
+Source0:	ftp://ftp.freeradius.org/pub/radius/freeradius-0.1.tar.gz
 
 %define         _localstatedir  /var/radius
 %define		_make		make
