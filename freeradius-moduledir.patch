@@ -1,0 +1,77 @@
+Only in freeradius-1.0.1.orig: acinclude.m4
+diff -dur freeradius-1.0.1.orig/raddb/radiusd.conf.in freeradius-1.0.1/raddb/radiusd.conf.in
+--- freeradius-1.0.1.orig/raddb/radiusd.conf.in	2004-05-13 22:10:19.000000000 +0200
++++ freeradius-1.0.1/raddb/radiusd.conf.in	2004-10-13 10:15:34.997729127 +0200
+@@ -71,7 +71,7 @@
+ #	make
+ #	make install
+ #
+-libdir = @libdir@
++libdir = @libdir@/freeradius
+ 
+ #  pidfile: Where to place the PID of the RADIUS server.
+ #
+diff -dur freeradius-1.0.1.orig/src/main/mainconfig.c freeradius-1.0.1/src/main/mainconfig.c
+--- freeradius-1.0.1.orig/src/main/mainconfig.c	2004-06-08 17:09:40.000000000 +0200
++++ freeradius-1.0.1/src/main/mainconfig.c	2004-10-13 10:15:35.010728454 +0200
+@@ -103,7 +103,7 @@
+ 	{ "prefix",             PW_TYPE_STRING_PTR, 0, &prefix,            "/usr/local"},
+ 	{ "localstatedir",      PW_TYPE_STRING_PTR, 0, &localstatedir,     "${prefix}/var"},
+ 	{ "logdir",             PW_TYPE_STRING_PTR, 0, &radlog_dir,        "${localstatedir}/log"},
+-	{ "libdir",             PW_TYPE_STRING_PTR, 0, &radlib_dir,        "${prefix}/lib"},
++	{ "libdir",             PW_TYPE_STRING_PTR, 0, &radlib_dir,        "${prefix}/lib/freeradius"},
+ 	{ "radacctdir",         PW_TYPE_STRING_PTR, 0, &radacct_dir,       "${logdir}/radacct" },
+ 	{ "hostname_lookups",   PW_TYPE_BOOLEAN,    0, &librad_dodns,      "no" },
+ #ifdef WITH_SNMP
+diff -dur freeradius-1.0.1.orig/src/modules/rlm_sql/drivers/rules.mak freeradius-1.0.1/src/modules/rlm_sql/drivers/rules.mak
+--- freeradius-1.0.1.orig/src/modules/rlm_sql/drivers/rules.mak	2003-06-05 22:16:54.000000000 +0200
++++ freeradius-1.0.1/src/modules/rlm_sql/drivers/rules.mak	2004-10-13 10:17:24.451056585 +0200
+@@ -93,7 +93,7 @@
+ $(TARGET).la: $(DYNAMIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+ 	-module $(LINK_MODE) $(CFLAGS) \
+-	$(RLM_SQL_CFLAGS) -o $@ -rpath $(libdir) $^ $(RLM_SQL_LIBS)
++	$(RLM_SQL_CFLAGS) -o $@ -rpath $(libdir)/freeradius $^ $(RLM_SQL_LIBS)
+ 
+ #######################################################################
+ #
+@@ -143,7 +143,7 @@
+ #  Do any module-specific installation.
+ #
+ #  If there isn't a TARGET defined, then don't do anything.
+-#  Otherwise, install the libraries into $(libdir)
++#  Otherwise, install the libraries into $(libdir)/freeradius
+ #
+ install:
+-	[ "x$(TARGET)" = "x" ] || $(LIBTOOL) --mode=install $(INSTALL) -c $(TARGET).la $(R)$(libdir)/$(TARGET).la
++	[ "x$(TARGET)" = "x" ] || $(LIBTOOL) --mode=install $(INSTALL) -c $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la
+diff -dur freeradius-1.0.1.orig/src/modules/rules.mak freeradius-1.0.1/src/modules/rules.mak
+--- freeradius-1.0.1.orig/src/modules/rules.mak	2002-08-06 18:11:39.000000000 +0200
++++ freeradius-1.0.1/src/modules/rules.mak	2004-10-13 10:16:28.824939523 +0200
+@@ -96,7 +96,7 @@
+ $(TARGET).la: $(DYNAMIC_OBJS)
+ 	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
+ 	-module $(LINK_MODE) $(CFLAGS) $(RLM_CFLAGS) $(RLM_LDFLAGS) \
+-	-o $@ -rpath $(libdir) $^ $(RLM_LIBS) $(LIBS)
++	-o $@ -rpath $(libdir)/freeradius $^ $(RLM_LIBS) $(LIBS)
+ 
+ #######################################################################
+ #
+@@ -151,13 +151,13 @@
+ #  Do any module-specific installation.
+ #
+ #  If there isn't a TARGET defined, then don't do anything.
+-#  Otherwise, install the libraries into $(libdir)
++#  Otherwise, install the libraries into $(libdir)/freeradius
+ #
+ install:
+ 	if [ "x$(TARGET)" != "x" ]; then \
+ 	    $(LIBTOOL) --mode=install $(INSTALL) -c \
+-		$(TARGET).la $(R)$(libdir)/$(TARGET).la; \
+-	    rm -f $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la; \
+-	    ln -s $(TARGET).la $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la; \
++		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la; \
++	    rm -f $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
++	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
+ 	fi
+ 	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)
