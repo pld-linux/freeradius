@@ -36,7 +36,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f "$LOCKF" ]; then
 		msg_starting RADIUS
-		daemon "$RADIUSD" -y
+		daemon "$RADIUSD"
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch "$LOCKF"
 	else
