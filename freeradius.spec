@@ -16,7 +16,8 @@ Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
 URL:		http://www.freeradius.org/
-Prereq:		/sbin/chkconfig
+Requires(post,preun):	/sbin/chkconfig
+Requires(pre):	user-radius
 Requires:	libtool
 BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
@@ -88,16 +89,6 @@ install %{SOURCE3}	$RPM_BUILD_ROOT/etc/pam.d/radius
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%pre
-if [ -n "`id -u radius 2>/dev/null`" ]; then
-        if [ "`id -u radius`" != "29" ]; then
-                echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
-                exit 1
-        fi
-else
-        /usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g nobody radius 1>&2
-fi
-        
 %post
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
@@ -112,11 +103,6 @@ if [ "$1" = "0" ]; then
                 /etc/rc.d/init.d/%{name} stop 1>&2
         fi
         /sbin/chkconfig --del %{name}
-fi
-
-%postun
-if [ "$1" = "0" ]; then
-        /usr/sbin/userdel %{name}
 fi
 
 %files
