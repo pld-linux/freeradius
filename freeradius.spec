@@ -125,7 +125,7 @@ fi
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
-%attr(755,root,root) %{_libdir}/*.la
+%{_libdir}/*.la
 
 %dir %{_sysconfdir}/raddb
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/raddb/*
