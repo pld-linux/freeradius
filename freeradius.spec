@@ -12,6 +12,7 @@ Release:	0
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
+# Source0-md5:	04e4026a1f4bb08e8db20a16d9834b71
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
