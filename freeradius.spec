@@ -17,7 +17,7 @@ Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
 URL:		http://www.freeradius.org/
-BuildRequires:	gdbm-devel
+#BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	mysql-devel
 BuildRequires:	openldap-devel
@@ -69,7 +69,8 @@ touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
 	--with-ltdl-include=%{_includedir}/none \
 	--with-ltdl-lib=%{_libdir} \
 	--disable-ltdl-install \
-	--without-rlm_krb5
+	--without-rlm_krb5 \
+	--without-rlm_dbm
 %{__make}
 
 %install
