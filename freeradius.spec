@@ -63,7 +63,7 @@ bardziej podatny na konfiguracjê.
 %patch0 -p1
 %patch1 -p1
 
-tail +3614 aclocal.m4 > acinclude.m4
+tail -n +3614 aclocal.m4 > acinclude.m4
 
 %build
 maindir="$(pwd)"
