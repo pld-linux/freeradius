@@ -1,31 +1,42 @@
-# FIXME: find a way of getting rid of "-" on versions ... rpm will be happy
-Summary:	High-performance and highly configurable RADIUS server
-Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
-Name:		freeradius
-Version:	0.1
-Release:	0
-License:	GPL
-Group:		Networking/Daemons
-Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-URL:		http://www.freeradius.org/
-Prereq:		/sbin/chkconfig
-# FIXME: snmpwalk, snmpget and rusers POSSIBLY needed by checkrad
-Requires:	libtool
-BuildRequires:	libltdl-devel
-BuildRequires:	openldap-devel
-#someone's help needed:split&test into %{name}-{mysql,pgsql,common,devel,static,ldap,pam?} hunter.
-BuildRequires:	mysql-devel
-BuildRequires:	postgresql-devel
-BuildRequires:	pam-devel
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Obsoletes:	cistron-radius
-
-%define         _localstatedir  /var/radius
-
+%include        /usr/lib/rpm/macros.python
+%include        /usr/lib/rpm/macros.perl
 # FIXME: won't be good to include these contrib examples?
 # Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 # Source2:	http://www.ping.de/~fdc/radius/radlast-0.03
 # Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
+Summary:	High-performance and highly configurable RADIUS server
+Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
+Name:		freeradius
+Version:	0.7
+Release:	0
+License:	GPL
+Group:		Networking/Daemons
+Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
+Source1:	%{name}.logrotate
+Source2:	%{name}.init
+Source3:	%{name}.pam
+URL:		http://www.freeradius.org/
+Prereq:		/sbin/chkconfig
+Requires:	libtool
+BuildRequires:	gdbm-devel
+BuildRequires:	libltdl-devel
+BuildRequires:	mysql-devel
+BuildRequires:	openldap-devel
+BuildRequires:	openssl-devel
+BuildRequires:	pam-devel
+BuildRequires:	perl-devel
+BuildRequires:	postgresql-backend-devel
+BuildRequires:	postgresql-devel
+BuildRequires:	python-devel
+BuildRequires:	ucd-snmp-devel
+BuildRequires:	ucd-snmp-utils
+BuildRequires:	unixODBC-devel
+BuildRequires:	rpm-perlprov
+BuildRequires:	rpm-pythonprov
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Obsoletes:	cistron-radius
+
+%define         _localstatedir  %{_var}/lib/freeradius
 
 %description
 The FreeRADIUS Server Project is an attempt to create a
@@ -42,80 +53,88 @@ bardziej podatny na konfiguracjê.
 %prep
 %setup -q
 
-# FIXME: some folks prefer -dist files ... rename them or not?
-#cd raddb
-#chmod 640 clients naspasswd radiusd.conf.in
-#cd ..
-
 %build
-#libtoolize --copy --force
-#aclocal
-#autoconf
-#automake -a -c
+touch src/modules/rlm_eap/types/rlm_eap_tls/config.h
 
-%configure2_13 --localstatedir=%{_localstatedir} \
+%configure2_13 \
+	--with-system-libtool \
+	--enable-strict-dependencies \
+	--with-logdir=%{_var}/log/freeradius \
+	--with-experimental-modules \
 	--with-threads \
 	--with-thread-pool \
 	--with-gnu-ld \
-	--disable-ltdl-install
+	--with-ltdl-include=%{_includedir}/none \
+	--with-ltdl-lib=%{_libdir} \
+	--disable-ltdl-install \
+	--without-rlm_krb5
 %{__make}
 
-libtool --finish %{_libdir}
-
 %install
-# prepare $RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/{logrotate.d,pam.d,rc.d/init.d}
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/{logrotate.d,pam.d,rc.d/init.d,raddb}
+install -d $RPM_BUILD_ROOT%{_var}/log/radius
 
-# install files
-%{__make} install R=$RPM_BUILD_ROOT
-# done here & put noreplace in %files to avoid messing up existing installations
-for i in radutmp radwtmp  radius.log radwatch.log checkrad.log
-do
-  touch  $RPM_BUILD_ROOT%{_localstatedir}/log/$i
-  echo  $RPM_BUILD_ROOT%{_localstatedir}/log/$i
-  #who the hell should own logfiles/ and what sgid should have radiusd ?
-# do we need %{_sysconfdir}/shadow do be +r for wheel ? or better use PAM ?
-  # Hunter
-done
+%{__make} install \
+	R=$RPM_BUILD_ROOT
 
+rm -f $RPM_BUILD_ROOT{%{_mandir}/man8/builddbm.8,%{_sbindir}/rc.radiusd}
+rm -f $RPM_BUILD_ROOT%{_sysconfdir}/raddb/{clients,*.pl}
 
-# remove unneeded stuff
-rm -f $RPM_BUILD_ROOT%{_prefix}/{man/man8/builddbm.8,sbin/rc.radiusd}
-
-cd redhat
-install -m 555 rc.radiusd-redhat $RPM_BUILD_ROOT/etc/rc.d/init.d/radiusd
-install radiusd-logrotate $RPM_BUILD_ROOT/etc/logrotate.d/radiusd
-install radiusd-pam       $RPM_BUILD_ROOT/etc/pam.d/radius
-cd ..
-
-gzip -9nf doc/ChangeLog doc/README* COPYRIGHT
+install %{SOURCE1}	$RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/%{name}
+install %{SOURCE2}	$RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/%{name}
+install %{SOURCE3}	$RPM_BUILD_ROOT%{_sysconfdir}/pam.d/radius
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%pre
+if [ -n "`id -u radius 2>/dev/null`" ]; then
+        if [ "`id -u radius`" != "29" ]; then
+                echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
+                exit 1
+        fi
+else
+        /usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g nobody radius 1>&2
+fi
+        
 %post
-/sbin/chkconfig --add radiusd.init
+/sbin/chkconfig --add %{name}
+if [ -f /var/lock/subsys/%{name} ]; then
+        /etc/rc.d/init.d/%{name} restart 1>&2
+else
+        echo "Run \"/etc/rc.d/init.d/%{name} start\" to start %{name} daemon."
+fi
 
 %preun
 if [ "$1" = "0" ]; then
-	/sbin/chkconfig --del radiusd.init
+        if [ -f /var/lock/subsys/%{name} ]; then
+                /etc/rc.d/init.d/%{name} stop 1>&2
+        fi
+        /sbin/chkconfig --del %{name}
+fi
+
+%postun
+if [ "$1" = "0" ]; then
+        /usr/sbin/userdel %{name}
 fi
 
 %files
 %defattr(644,root,root,755)
-%doc doc/ChangeLog.gz doc/README*.gz todo COPYRIGHT.gz
-%config(noreplace) %verify(not size mtime md5) /etc/pam.d/radius
-%config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/radiusd
-%config(noreplace) %verify(not size mtime md5) /etc/rc.d/init.d/radiusd
-%config %{_sysconfdir}/raddb/*
-%{_mandir}/*
+%doc doc/*
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
-%{_libdir}/*
-%dir %{_localstatedir}/log/radacct/
-%config(missingok noreplace) %{_localstatedir}/log/checkrad.log
-%config(missingok noreplace) %{_localstatedir}/log/radwatch.log
-%config(missingok noreplace) %{_localstatedir}/log/radius.log
-%config(missingok noreplace) %{_localstatedir}/log/radwtmp
-%config(missingok noreplace) %{_localstatedir}/log/radutmp
+%attr(755,root,root) %{_libdir}/*.so
+%attr(755,root,root) %{_libdir}/*.la
+
+%dir %{_sysconfdir}/raddb
+%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/raddb/*
+
+%dir %{_var}/log/%{name}
+%dir %{_var}/log/%{name}/radacct
+
+%attr(754,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
+%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/pam.d/*
+%attr(640,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/*
+
+%{_mandir}/man?/*
