@@ -180,3 +180,23 @@ diff -dur freeradius-1.0.1.orig/src/modules/rlm_eap/libeap/Makefile freeradius-1
  
  static: $(TARGET).a
  
+diff -dur freeradius-1.0.1.orig/src/main/Makefile.in freeradius-1.0.1/src/main/Makefile.in
+--- freeradius-1.0.1.orig/src/main/Makefile.in	2004-10-15 10:46:40.000000000 +0200
++++ freeradius-1.0.1/src/main/Makefile.in	2004-10-15 10:49:00.465445152 +0200
+@@ -150,11 +150,11 @@
+ 	rm -rf *.o *.so *~ $(BINARIES) .libs
+ 
+ install:
+-	$(LIBTOOL) --mode=install $(INSTALL) -m 755 $(INSTALLSTRIP) radiusd$(EXEEXT)	$(R)$(sbindir)
+-	$(INSTALL) -m 755 $(INSTALLSTRIP) radwho$(EXEEXT)	$(R)$(bindir)
+-	$(INSTALL) -m 755 $(INSTALLSTRIP) radzap$(EXEEXT)	$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 radiusd	$(R)$(sbindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 radwho	$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 radzap	$(R)$(bindir)
+ 	$(INSTALL) -m 755    radlast			$(R)$(bindir)
+-	$(INSTALL) -m 755    radclient$(EXEEXT)		$(R)$(bindir)
+-	$(INSTALL) -m 755    radrelay$(EXEEXT)		$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 radclient	$(R)$(bindir)
++	$(LIBTOOL) --mode=install $(INSTALL) -m 755 radrelay	$(R)$(bindir)
+ 	$(INSTALL) -m 755    radtest 			$(R)$(bindir)
+ 	$(INSTALL) -m 755    checkrad.pl		$(R)$(sbindir)/checkrad
