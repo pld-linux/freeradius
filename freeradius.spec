@@ -8,7 +8,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	0.9.3
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -18,6 +18,7 @@ Source2:	%{name}.init
 Source3:	%{name}.pam
 Patch0:		%{name}-ac.patch
 Patch1:		%{name}-rlm_smb-overflow.patch
+Patch2:		%{name}-netsnmp.patch
 URL:		http://www.freeradius.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -33,8 +34,7 @@ BuildRequires:	perl-devel
 BuildRequires:	postgresql-backend-devel
 BuildRequires:	postgresql-devel
 BuildRequires:	python-devel
-BuildRequires:	ucd-snmp-devel
-BuildRequires:	ucd-snmp-utils
+BuildRequires:	net-snmp-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpm-pythonprov
@@ -62,8 +62,8 @@ bardziej podatny na konfiguracjê.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-
 tail -n +3614 aclocal.m4 > acinclude.m4
+%patch2 -p1
 
 %build
 maindir="$(pwd)"
@@ -88,6 +88,8 @@ done
 %{__autoconf}
 %{__autoheader}
 %configure \
+	SNMPGET="/usr/bin/snmpget" \
+	SNMPWALK="/usr/bin/snmpwalk" \
 	--enable-strict-dependencies \
 	--with-logdir=%{_var}/log/freeradius \
 	--with-experimental-modules \
