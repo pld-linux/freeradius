@@ -6,8 +6,6 @@ Version:	0.1
 Release:	0
 License:	GPL
 Group:		Networking/Daemons
-Group(de):	Netzwerkwesen/Server
-Group(pl):	Sieciowe/Serwery
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
 URL:		http://www.freeradius.org/
 Prereq:		/sbin/chkconfig
