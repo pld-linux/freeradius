@@ -93,15 +93,11 @@ install radiusd-logrotate $RPM_BUILD_ROOT/etc/logrotate.d/radiusd
 install radiusd-pam       $RPM_BUILD_ROOT/etc/pam.d/radius
 cd ..
 
-%preun
-if [ "$1" = "0" ]; then
-	/sbin/chkconfig --del radiusd.init
-fi
+%post
+NAME=radiusd.init; %chkconfig_add
 
-%postin
-if [ "$1" = "0" ]; then
-	/sbin/chkconfig --add radiusd.init
-fi
+%preun
+NAME=radiusd.init; %chkconfig_del
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT
