@@ -42,7 +42,15 @@ BuildRequires:	python-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/usermod
+Requires(pre):	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	libtool
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
@@ -140,29 +148,15 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/{*.a,libradius.la}
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid radius`" ]; then
-	if [ "`getgid radius`" != "29" ]; then
-		echo "Error: group radius doesn't have gid=29. Correct this before installing radius." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 29 -r -f radius
-	if [ -n "`id -u radius 2>/dev/null`" ]; then
-		# upgrade from previous versions of the package, where radius' gid was "nobody"
-		if [ "`id -g radius`" = "99" ]; then
-			usermod -g 29 radius
-			chown radius:radius /var/log/%{name}/*.log >/dev/null 2>&1 || :
-			chown radius:radius /var/log/%{name}/radacct/* >/dev/null 2>&1 || :
-		fi
-	fi
-fi
-if [ -n "`id -u radius 2>/dev/null`" ]; then
-	if [ "`id -u radius`" != "29" ]; then
-		echo "Error: user radius doesn't have uid=29. Correct this before installing radius server." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g radius radius 1>&2
+%groupadd -g 29 -r -f radius
+%useradd -u 29 -d %{_localstatedir} -s /bin/false -M -r -c "%{name}" -g radius radius
+
+# TODO: should be in trigger instead.
+# upgrade from previous versions of the package, where radius' gid was "nobody"
+if [ "`id -g radius`" = "99" ]; then
+	usermod -g 29 radius
+	chown radius:radius /var/log/%{name}/*.log >/dev/null 2>&1 || :
+	chown radius:radius /var/log/%{name}/radacct/* >/dev/null 2>&1 || :
 fi
 
 %post
