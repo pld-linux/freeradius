@@ -1,0 +1,4 @@
+- Version: 1.0.1
+- modules moved from %{_libdir} to %{_libdir}/%{name}
+- radius group added and used (uid is not enough for good access control, and group 'nobody'
+  should not be used for any file).
