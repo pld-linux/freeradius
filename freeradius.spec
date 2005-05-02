@@ -190,19 +190,19 @@ fi
 %attr(755,root,root) %{_libdir}/*.so
 %{_libdir}/*.la
 %dir %{_libdir}/%{name}
-%{_libdir}/%{name}/*.so
+%attr(755,root,root) %{_libdir}/%{name}/*.so
 %{_libdir}/%{name}/*.la
 %{_datadir}/freeradius
 
 %dir %{_sysconfdir}/raddb
-%config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/raddb/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/raddb/*
 
 %attr(771,root,radius) %dir %{_var}/log/%{name}
 %attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
 %attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
-%attr(640,root,root) %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/*
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/*
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/*
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/*
 
 %{_mandir}/man?/*
