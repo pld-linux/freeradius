@@ -6,12 +6,12 @@
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	1.0.1
-Release:	4
+Version:	1.0.2
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	abc30cb71367f859ceed4de6477cd59f
+# Source0-md5:	f5dfce4efbb03bbc47ceae08270a875e
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
@@ -38,6 +38,7 @@ BuildRequires:	pam-devel
 BuildRequires:	perl-devel
 BuildRequires:	postgresql-backend-devel
 BuildRequires:	postgresql-devel
+BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	net-snmp-devel
 BuildRequires:	unixODBC-devel
@@ -81,8 +82,6 @@ wiêksze mo¿liwo¶ci konfigurowania.
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
-
-find . -type d -name CVS | xargs rm -r
 
 %build
 maindir="$(pwd)"
