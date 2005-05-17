@@ -1,8 +1,10 @@
 #
 %include	/usr/lib/rpm/macros.perl
-# FIXME: won't be good to include these contrib examples?
-# Source1:	http://www.ping.de/~fdc/radius/radacct-replay
-# Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
+# FIXME:
+# - won't be good to include these contrib examples?
+#   Source1:	http://www.ping.de/~fdc/radius/radacct-replay
+#   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
+# - SECURITY: http://www.gentoo.org/security/en/glsa/glsa-200505-13.xml
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
