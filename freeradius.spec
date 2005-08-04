@@ -4,7 +4,6 @@
 # - won't be good to include these contrib examples?
 #   Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 #   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
-# - SECURITY: http://www.gentoo.org/security/en/glsa/glsa-200505-13.xml
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
@@ -25,6 +24,7 @@ Patch4:		%{name}-moduledir.patch
 Patch5:		%{name}-rundir.patch
 Patch6:		%{name}-config.patch
 Patch7:		%{name}-eap_install_order.patch
+Patch8:		%{name}-sql_injection.patch
 URL:		http://www.freeradius.org/
 Provides:	user(radius)
 Provides:	group(radius)
@@ -83,6 +83,7 @@ wiêksze mo¿liwo¶ci konfigurowania.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
