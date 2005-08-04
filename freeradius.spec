@@ -56,7 +56,6 @@ Requires(pre):	/usr/sbin/useradd
 Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(post,preun):	/sbin/chkconfig
-Requires:	libtool
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	cistron-radius
@@ -145,8 +144,8 @@ install %{SOURCE3}	$RPM_BUILD_ROOT/etc/pam.d/radius
 
 # remove useless static modules and library
 # rlm*.la are used (lt_dlopen)
-rm -f $RPM_BUILD_ROOT%{_libdir}/{*.a,libradius.la}
-rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/{*.a,libradius.la}
+rm -f $RPM_BUILD_ROOT%{_libdir}/{*.a,*.la}
+rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/*.a
 
 %clean
 rm -rf $RPM_BUILD_ROOT
