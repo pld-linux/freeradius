@@ -8,7 +8,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.0.2
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -129,7 +129,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/raddb,%{_libdir}/%{name}} \
 	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,rc.d/init.d} \
-	$RPM_BUILD_ROOT%{_var}/log/radius
+	$RPM_BUILD_ROOT%{_var}/log/{,archiv}/freeradius
 
 %{__make} install \
 	LIBTOOL="`pwd`/libtool --tag=CC" \
@@ -201,6 +201,8 @@ fi
 
 %attr(771,root,radius) %dir %{_var}/log/%{name}
 %attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
+%attr(771,root,radius) %dir %{_var}/log/archiv/%{name}
+%attr(771,root,radius) %dir %{_var}/log/archiv/%{name}/radacct
 %attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
