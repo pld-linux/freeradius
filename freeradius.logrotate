@@ -4,6 +4,7 @@
 # Last part should reload the server
 
 /var/log/freeradius/radacct/*/detail {
+	olddir /var/log/archiv/freeradius/radacct
 	monthly
 	rotate 4
 	create 660 root radius
@@ -12,6 +13,7 @@
 }
 
 /var/log/freeradius/checkrad.log {
+	olddir /var/log/archiv/freeradius
 	monthly
 	rotate 4
 	create 660 root radius
@@ -20,6 +22,7 @@
 }
 
 /var/log/freeradius/radius.log {
+	olddir /var/log/archiv/freeradius
 	monthly
 	rotate 4
 	create 660 root radius
@@ -28,6 +31,7 @@
 }
 
 /var/log/freeradius/radwatch.log {
+	olddir /var/log/archiv/freeradius
 	monthly
 	rotate 4
 	create 660 root radius
@@ -39,6 +43,7 @@
 
 # Should this really be rotated
 /var/log/freeradius/radutmp {
+	olddir /var/log/archiv/freeradius
 	monthly
 	rotate 4
 	create 660 root radius
@@ -47,6 +52,7 @@
 }
 
 /var/log/freeradius/radwtmp {
+	olddir /var/log/archiv/freeradius
 	monthly
 	rotate 4
 	create 660 root radius
