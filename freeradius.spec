@@ -26,8 +26,6 @@ Patch6:		%{name}-config.patch
 Patch7:		%{name}-eap_install_order.patch
 Patch8:		%{name}-sql_injection.patch
 URL:		http://www.freeradius.org/
-Provides:	user(radius)
-Provides:	group(radius)
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	cyrus-sasl-devel
@@ -47,7 +45,6 @@ BuildRequires:	net-snmp-devel
 BuildRequires:	unixODBC-devel
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
-PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
 Requires(pre):	/usr/sbin/groupadd
@@ -57,8 +54,11 @@ Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(post,preun):	/sbin/chkconfig
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Requires:	rc-scripts
+Provides:	user(radius)
+Provides:	group(radius)
 Obsoletes:	cistron-radius
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 The FreeRADIUS Server Project is an attempt to create a
