@@ -8,7 +8,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.0
-Release:	0.1
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -16,13 +16,13 @@ Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
-Patch1:		%{name}-makefile.patch
-Patch2:		%{name}-smbencrypt.patch
-Patch3:		%{name}-linking.patch
-Patch4:		%{name}-moduledir.patch
-Patch5:		%{name}-rundir.patch
-Patch6:		%{name}-config.patch
-Patch7:		%{name}-eap_install_order.patch
+Patch0:		%{name}-makefile.patch
+Patch1:		%{name}-smbencrypt.patch
+Patch2:		%{name}-linking.patch
+Patch3:		%{name}-moduledir.patch
+Patch4:		%{name}-rundir.patch
+Patch5:		%{name}-config.patch
+Patch6:		%{name}-eap_install_order.patch
 URL:		http://www.freeradius.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -73,13 +73,13 @@ wiêksze mo¿liwo¶ci konfigurowania.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
