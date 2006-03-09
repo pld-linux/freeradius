@@ -51,7 +51,7 @@ diff -dur freeradius-1.0.1.orig/src/modules/rules.mak freeradius-1.0.1/src/modul
 @@ -96,7 +96,7 @@
  $(TARGET).la: $(DYNAMIC_OBJS)
  	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
- 	-module $(LINK_MODE) $(CFLAGS) $(RLM_CFLAGS) $(RLM_LDFLAGS) \
+ 	-module $(LINK_MODE) $(LDFLAGS) $(RLM_LDFLAGS) \
 -	-o $@ -rpath $(libdir) $^ $(RLM_LIBS) $(LIBS)
 +	-o $@ -rpath $(libdir)/freeradius $^ $(RLM_LIBS) $(LIBS)
  
@@ -69,9 +69,9 @@ diff -dur freeradius-1.0.1.orig/src/modules/rules.mak freeradius-1.0.1/src/modul
  	    $(LIBTOOL) --mode=install $(INSTALL) -c \
 -		$(TARGET).la $(R)$(libdir)/$(TARGET).la; \
 -	    rm -f $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la; \
--	    ln -s $(TARGET).la $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la; \
+-	    ln -s $(TARGET).la $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la || exit $?; \
 +		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la; \
 +	    rm -f $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
-+	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
++	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la || exit $?; \
  	fi
  	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)

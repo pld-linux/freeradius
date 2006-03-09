@@ -7,16 +7,15 @@
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	1.0.2
-Release:	5
+Version:	1.1.0
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	f5dfce4efbb03bbc47ceae08270a875e
+# Source0-md5:	e04ec8a07b8c8dc96e28ef7fdce261e7
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
-Patch0:		%{name}-autoconf_mysql.patch
 Patch1:		%{name}-makefile.patch
 Patch2:		%{name}-smbencrypt.patch
 Patch3:		%{name}-linking.patch
@@ -24,7 +23,6 @@ Patch4:		%{name}-moduledir.patch
 Patch5:		%{name}-rundir.patch
 Patch6:		%{name}-config.patch
 Patch7:		%{name}-eap_install_order.patch
-Patch8:		%{name}-sql_injection.patch
 URL:		http://www.freeradius.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -75,7 +73,6 @@ wiêksze mo¿liwo¶ci konfigurowania.
 
 %prep
 %setup -q
-%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -83,7 +80,6 @@ wiêksze mo¿liwo¶ci konfigurowania.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
-%patch8 -p1
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
@@ -92,10 +88,10 @@ awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { print
 maindir="$(pwd)"
 for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
 	rlm_eap/types/rlm_eap_{md5,mschapv2,peap,sim,tls,ttls} \
-	rlm_eap rlm_example rlm_ippool rlm_krb5 rlm_ldap rlm_pam rlm_perl rlm_python \
-	rlm_radutmp rlm_smb \
+	rlm_eap rlm_example rlm_ippool rlm_krb5 rlm_ldap rlm_otp \
+	rlm_pam rlm_perl rlm_python rlm_radutmp rlm_smb \
 	rlm_sql/drivers/rlm_sql_{db2,iodbc,mysql,oracle,postgresql,unixodbc} \
-	rlm_sql rlm_sqlcounter rlm_unix rlm_x99_token ; do
+	rlm_sql rlm_sql_log rlm_sqlcounter rlm_unix ; do
 
 	cd src/modules/${d}
 	%{__aclocal} -I ${maindir}
