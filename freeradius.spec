@@ -4,6 +4,8 @@
 # - won't be good to include these contrib examples?
 #   Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 #   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
+# TODO
+# - (CVE-2006-1354) http://security.gentoo.org/glsa/glsa-200604-03.xml
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
