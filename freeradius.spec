@@ -6,15 +6,16 @@
 #   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
 # TODO
 # - (CVE-2006-1354) http://security.gentoo.org/glsa/glsa-200604-03.xml
+# - finish update to 1.1.1
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	1.1.0
-Release:	2
+Version:	1.1.1
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	e04ec8a07b8c8dc96e28ef7fdce261e7
+# Source0-md5:	b38b24f6352090fdb571b9e8da52e12e
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
@@ -43,7 +44,6 @@ BuildRequires:	postgresql-devel
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	unixODBC-devel
 Requires(post,preun):	/sbin/chkconfig
@@ -76,12 +76,12 @@ wiêksze mo¿liwo¶ci konfigurowania.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
+#%patch4 -p1
 %patch5 -p1
-%patch6 -p1
+#%patch6 -p1
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
