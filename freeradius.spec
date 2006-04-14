@@ -8,7 +8,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.0
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -41,7 +41,6 @@ BuildRequires:	postgresql-devel
 BuildRequires:	python
 BuildRequires:	python-devel
 BuildRequires:	rpm-perlprov
-BuildRequires:	rpmbuild(macros) >= 1.202
 BuildRequires:	rpmbuild(macros) >= 1.268
 BuildRequires:	unixODBC-devel
 Requires(post,preun):	/sbin/chkconfig
