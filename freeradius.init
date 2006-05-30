@@ -63,7 +63,7 @@ case "$1" in
 		killproc "$RADIUSD" -HUP
 		RETVAL=$?
 	else
-		msg_not_running RADIUS >&2
+		msg_not_running RADIUS
 		exit 7
 	fi
 	;;
