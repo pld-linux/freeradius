@@ -8,7 +8,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.0
-Release:	3
+Release:	4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -23,6 +23,7 @@ Patch3:		%{name}-moduledir.patch
 Patch4:		%{name}-rundir.patch
 Patch5:		%{name}-config.patch
 Patch6:		%{name}-eap_install_order.patch
+Patch7:		%{name}-sizeof.patch
 URL:		http://www.freeradius.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -79,6 +80,7 @@ wiêksze mo¿liwo¶ci konfigurowania.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p0
 
 awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
 	< aclocal.m4 > acinclude.m4
