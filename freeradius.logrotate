@@ -59,6 +59,6 @@
 	compress
 	missingok
 	postrotate
-		/etc/rc.d/init.d/radiusd condrestart
+		/sbin/service radiusd condrestart
 	endscript
 }
