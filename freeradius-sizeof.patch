@@ -1,0 +1,12 @@
+diff -u -r1.50.2.4.2.2 dict.c
+--- src/lib/dict.c      9 Jan 2006 23:02:47 -0000       1.50.2.4.2.2
++++ src/lib/dict.c      15 Jan 2006 14:30:06 -0000
+@@ -1207,7 +1207,7 @@
+ 	if (!name) return NULL;
+ 
+ 	hash = dict_hashname(name);
+-	hash = lrad_hash_update(&attr, sizeof(&attr), hash);
++	hash = lrad_hash_update(&attr, sizeof(attr), hash);
+ 
+ 	return lrad_hash_table_finddata(values_byname, hash);
+ }
