@@ -8,7 +8,7 @@
 # - (CVE-2006-1354) http://security.gentoo.org/glsa/glsa-200604-03.xml
 # - finish update to 1.1.1
 Summary:	High-performance and highly configurable RADIUS server
-Summary(pl):	Szybki i wysoce konfigurowalny serwer RADIUS
+Summary(pl.UTF-8):   Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.1
 Release:	0.1
@@ -67,11 +67,11 @@ high-performance and highly configurable GPL'd RADIUS server. It is
 generally similar to the Livingston 2.0 RADIUS server, but has a lot
 more features, and is much more configurable.
 
-%description -l pl
+%description -l pl.UTF-8
 Projekt FreeRadius ma na celu stworzenie szybkiego i wysoce
 konfigurowalnego serwera RADIUS na licencji GPL. Ten jest podobny do
-Livingston 2.0 RADIUS server ale ma o wiele wiêcej funkcji i posiada
-wiêksze mo¿liwo¶ci konfigurowania.
+Livingston 2.0 RADIUS server ale ma o wiele wiÄ™cej funkcji i posiada
+wiÄ™ksze moÅ¼liwoÅ›ci konfigurowania.
 
 %prep
 %setup -q
