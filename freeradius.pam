@@ -1,7 +1,4 @@
 #%PAM-1.0
-auth       required	pam_unix_auth.so shadow nullok
-auth       required	pam_nologin.so
-account    required	pam_unix_acct.so
-password   required	pam_cracklib.so
-password   required	pam_unix_password.so shadow nullok use_authtok
-session    required	pam_unix_session.so
+auth		include		system-auth
+account		required	pam_nologin.so
+account		include		system-auth
