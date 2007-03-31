@@ -11,7 +11,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl.UTF-8):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.1
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -31,6 +31,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	gdbm-devel
+BuildRequires:	krb5-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	mysql-devel
@@ -119,7 +120,7 @@ done
 	--with-ltdl-include=%{_includedir}/none \
 	--with-ltdl-lib=%{_libdir} \
 	--disable-ltdl-install \
-	--without-rlm_krb5 \
+	--with-rlm_krb5 \
 	--without-rlm_dbm
 %{__make} \
 	LIBTOOL="`pwd`/libtool --tag=CC"
