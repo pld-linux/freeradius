@@ -195,8 +195,8 @@ fi
 
 %attr(771,root,radius) %dir %{_var}/log/%{name}
 %attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
-%attr(771,root,radius) %dir %{_var}/log/archiv/%{name}
-%attr(771,root,radius) %dir %{_var}/log/archiv/%{name}/radacct
+%attr(771,root,radius) %dir %{_var}/log/archive/%{name}
+%attr(771,root,radius) %dir %{_var}/log/archive/%{name}/radacct
 %attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
