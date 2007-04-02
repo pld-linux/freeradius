@@ -129,7 +129,7 @@ done
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sysconfdir}/raddb,%{_libdir}/%{name}} \
 	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,rc.d/init.d} \
-	$RPM_BUILD_ROOT%{_var}/log/{,archiv}/freeradius/radacct
+	$RPM_BUILD_ROOT%{_var}/log/{,archive}/freeradius/radacct
 
 %{__make} install \
 	LIBTOOL="`pwd`/libtool --tag=CC" \
