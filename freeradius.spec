@@ -5,7 +5,6 @@
 #   Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 #   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
 # TODO
-# - (CVE-2006-1354) http://security.gentoo.org/glsa/glsa-200604-03.xml
 # - finish update to 1.1.1
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl.UTF-8):	Szybki i wysoce konfigurowalny serwer RADIUS
