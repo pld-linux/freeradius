@@ -77,7 +77,7 @@ większe możliwości konfigurowania.
 %setup -q
 %patch0 -p1
 #%patch1 -p1
-#%patch2 -p1
+%patch2 -p1
 #%patch3 -p1
 #%patch4 -p1
 %patch5 -p1
@@ -121,7 +121,7 @@ done
 	--disable-ltdl-install \
 	--with-rlm_krb5 \
 	--without-rlm_dbm
-%{__make} \
+%{__make} -j1 \
 	LIBTOOL="`pwd`/libtool --tag=CC"
 
 %install
@@ -130,7 +130,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/raddb,%{_libdir}/%{name}} \
 	$RPM_BUILD_ROOT/etc/{logrotate.d,pam.d,rc.d/init.d} \
 	$RPM_BUILD_ROOT%{_var}/log/{,archive}/freeradius/radacct
 
-%{__make} install \
+%{__make} -j1 install \
 	LIBTOOL="`pwd`/libtool --tag=CC" \
 	R=$RPM_BUILD_ROOT
 
@@ -180,13 +180,13 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/*
-%doc src/modules/rlm_sql/drivers/*/*.sql
+#%doc src/modules/rlm_sql/drivers/*/*.sql
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
 %dir %{_libdir}/%{name}
-%attr(755,root,root) %{_libdir}/%{name}/*.so
-%{_libdir}/%{name}/*.la
+#%attr(755,root,root) %{_libdir}/%{name}/*.so
+#%{_libdir}/%{name}/*.la
 %{_datadir}/freeradius
 
 %dir %{_sysconfdir}/raddb
@@ -196,7 +196,7 @@ fi
 %attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
 %attr(771,root,radius) %dir %{_var}/log/archive/%{name}
 %attr(771,root,radius) %dir %{_var}/log/archive/%{name}/radacct
-%attr(775,root,radius) %dir /var/run/%{name}
+#%attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/*
