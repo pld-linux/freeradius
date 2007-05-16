@@ -5,7 +5,7 @@ diff -dur freeradius-1.0.1.orig/Makefile freeradius-1.0.1/Makefile
  
  .PHONY: all clean install
  
--SUBDIRS		= ${LIBLTDLPATH} src raddb scripts doc
+-SUBDIRS		= $(LTDL_SUBDIRS) src raddb scripts doc
 +SUBDIRS		= src raddb scripts doc
  WHAT_TO_MAKE	= all
  
