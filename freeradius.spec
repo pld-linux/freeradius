@@ -9,12 +9,12 @@
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl.UTF-8):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
-Version:	1.1.1
-Release:	0.2
+Version:	1.1.6
+Release:	0.1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
-# Source0-md5:	b38b24f6352090fdb571b9e8da52e12e
+# Source0-md5:	a053d353ce5f393cb70795fd363a586f
 Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
@@ -83,8 +83,7 @@ większe możliwości konfigurowania.
 %patch5 -p1
 #%patch6 -p1
 
-awk 'BEGIN { printit=0; } { if (printit) print $0; } /## end libtool.m4/ { printit=1;}' \
-	< aclocal.m4 > acinclude.m4
+sed -e '/m4_include..libtool/d' < aclocal.m4 > acinclude.m4
 
 %build
 maindir="$(pwd)"
@@ -93,7 +92,8 @@ for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
 	rlm_eap rlm_example rlm_ippool rlm_krb5 rlm_ldap rlm_otp \
 	rlm_pam rlm_perl rlm_python rlm_radutmp rlm_smb \
 	rlm_sql/drivers/rlm_sql_{db2,iodbc,mysql,oracle,postgresql,unixodbc} \
-	rlm_sql rlm_sql_log rlm_sqlcounter rlm_unix ; do
+	rlm_sql rlm_sqlcounter rlm_unix ; do
+# rlm_sql_log - no configure.{in,ac}
 
 	cd src/modules/${d}
 	%{__aclocal} -I ${maindir}
