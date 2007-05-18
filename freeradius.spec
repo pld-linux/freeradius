@@ -4,13 +4,11 @@
 # - won't be good to include these contrib examples?
 #   Source1:	http://www.ping.de/~fdc/radius/radacct-replay
 #   Source3:	ftp://ftp.freeradius.org/pub/radius/contrib/radwho.cgi
-# TODO
-# - finish update to 1.1.6
 Summary:	High-performance and highly configurable RADIUS server
 Summary(pl.UTF-8):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.6
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -19,18 +17,17 @@ Source1:	%{name}.logrotate
 Source2:	%{name}.init
 Source3:	%{name}.pam
 Patch0:		%{name}-makefile.patch
-Patch1:		%{name}-smbencrypt.patch
-Patch2:		%{name}-linking.patch
-Patch3:		%{name}-moduledir.patch
-Patch4:		%{name}-rundir.patch
-Patch5:		%{name}-config.patch
-Patch6:		%{name}-eap_install_order.patch
+Patch1:		%{name}-linking.patch
+Patch2:		%{name}-moduledir.patch
+Patch3:		%{name}-rundir.patch
+Patch4:		%{name}-config.patch
 URL:		http://www.freeradius.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	cyrus-sasl-devel
 BuildRequires:	gdbm-devel
 BuildRequires:	krb5-devel
+BuildRequires:	libcom_err-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	mysql-devel
@@ -76,12 +73,10 @@ większe możliwości konfigurowania.
 %prep
 %setup -q
 %patch0 -p1
-#%patch1 -p1
+%patch1 -p1
 %patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
-%patch5 -p1
-#%patch6 -p1
+%patch3 -p1
+%patch4 -p1
 
 sed -e '/m4_include..libtool/d' < aclocal.m4 > acinclude.m4
 
@@ -92,12 +87,13 @@ for d in rlm_attr_rewrite rlm_checkval rlm_counter rlm_dbm \
 	rlm_eap rlm_example rlm_ippool rlm_krb5 rlm_ldap rlm_otp \
 	rlm_pam rlm_perl rlm_python rlm_radutmp rlm_smb \
 	rlm_sql/drivers/rlm_sql_{db2,iodbc,mysql,oracle,postgresql,unixodbc} \
-	rlm_sql rlm_sqlcounter rlm_unix ; do
-# rlm_sql_log - no configure.{in,ac}
+	rlm_sql rlm_sqlcounter rlm_sql_log rlm_unix ; do
 
 	cd src/modules/${d}
-	%{__aclocal} -I ${maindir}
-	%{__autoconf}
+	if [ -f configure.in ]; then
+		%{__aclocal} -I ${maindir}
+		%{__autoconf}
+	fi
 	if [ -f config.h.in ]; then
 		%{__autoheader}
 	fi
@@ -119,8 +115,7 @@ done
 	--with-ltdl-include=%{_includedir}/none \
 	--with-ltdl-lib=%{_libdir} \
 	--disable-ltdl-install \
-	--with-rlm_krb5 \
-	--without-rlm_dbm
+	--with-rlm_krb5
 %{__make} -j1 \
 	LIBTOOL="`pwd`/libtool --tag=CC"
 
@@ -180,13 +175,12 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc doc/*
-#%doc src/modules/rlm_sql/drivers/*/*.sql
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_sbindir}/*
 %attr(755,root,root) %{_libdir}/*.so
 %dir %{_libdir}/%{name}
-#%attr(755,root,root) %{_libdir}/%{name}/*.so
-#%{_libdir}/%{name}/*.la
+%attr(755,root,root) %{_libdir}/%{name}/*.so
+%{_libdir}/%{name}/*.la
 %{_datadir}/freeradius
 
 %dir %{_sysconfdir}/raddb
@@ -196,7 +190,7 @@ fi
 %attr(771,root,radius) %dir %{_var}/log/%{name}/radacct
 %attr(771,root,radius) %dir %{_var}/log/archive/%{name}
 %attr(771,root,radius) %dir %{_var}/log/archive/%{name}/radacct
-#%attr(775,root,radius) %dir /var/run/%{name}
+%attr(775,root,radius) %dir /var/run/%{name}
 
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/pam.d/*
