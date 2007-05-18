@@ -27,11 +27,11 @@ diff -dur freeradius-1.0.1.orig/src/modules/rlm_sql/drivers/rules.mak freeradius
 --- freeradius-1.0.1.orig/src/modules/rlm_sql/drivers/rules.mak	2003-06-05 22:16:54.000000000 +0200
 +++ freeradius-1.0.1/src/modules/rlm_sql/drivers/rules.mak	2004-10-13 10:17:24.451056585 +0200
 @@ -93,7 +93,7 @@
- $(TARGET).la: $(DYNAMIC_OBJS)
+ $(TARGET).la: $(LT_OBJS)
  	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
- 	-module $(LINK_MODE) $(CFLAGS) \
--	$(RLM_SQL_CFLAGS) -o $@ -rpath $(libdir) $^ $(RLM_SQL_LIBS)
-+	$(RLM_SQL_CFLAGS) -o $@ -rpath $(libdir)/freeradius $^ $(RLM_SQL_LIBS)
+ 	-module $(LINK_MODE) $(LDFLAGS) $(RLM_SQL_LDFLAGS) -o $@ \
+-	-rpath $(libdir) $^ $(RLM_SQL_LIBS)
++	-rpath $(libdir)/freeradius $^ $(RLM_SQL_LIBS)
  
  #######################################################################
  #
@@ -48,16 +48,16 @@ diff -dur freeradius-1.0.1.orig/src/modules/rlm_sql/drivers/rules.mak freeradius
 diff -dur freeradius-1.0.1.orig/src/modules/rules.mak freeradius-1.0.1/src/modules/rules.mak
 --- freeradius-1.0.1.orig/src/modules/rules.mak	2002-08-06 18:11:39.000000000 +0200
 +++ freeradius-1.0.1/src/modules/rules.mak	2004-10-13 10:16:28.824939523 +0200
-@@ -96,7 +96,7 @@
- $(TARGET).la: $(DYNAMIC_OBJS)
+@@ -113,7 +113,7 @@
+ $(TARGET).la: $(LT_OBJS)
  	$(LIBTOOL) --mode=link $(CC) -release $(RADIUSD_VERSION) \
- 	-module $(LINK_MODE) $(LDFLAGS) $(RLM_LDFLAGS) \
--	-o $@ -rpath $(libdir) $^ $(RLM_LIBS) $(LIBS)
-+	-o $@ -rpath $(libdir)/freeradius $^ $(RLM_LIBS) $(LIBS)
+ 	-module $(LINK_MODE) $(LDFLAGS) $(RLM_LDFLAGS) -o $@     \
+-	-rpath $(libdir) $^ $(top_builddir)/src/lib/libradius.la \
++	-rpath $(libdir)/freeradius $^ $(top_builddir)/src/lib/libradius.la \
+ 	$(RLM_LIBS) $(LIBS)
  
  #######################################################################
- #
-@@ -151,13 +151,13 @@
+@@ -155,13 +155,13 @@
  #  Do any module-specific installation.
  #
  #  If there isn't a TARGET defined, then don't do anything.
@@ -65,13 +65,13 @@ diff -dur freeradius-1.0.1.orig/src/modules/rules.mak freeradius-1.0.1/src/modul
 +#  Otherwise, install the libraries into $(libdir)/freeradius
  #
  install:
+ 	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)
  	if [ "x$(TARGET)" != "x" ]; then \
  	    $(LIBTOOL) --mode=install $(INSTALL) -c \
--		$(TARGET).la $(R)$(libdir)/$(TARGET).la; \
+-		$(TARGET).la $(R)$(libdir)/$(TARGET).la || exit $$?; \
 -	    rm -f $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la; \
--	    ln -s $(TARGET).la $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la || exit $?; \
-+		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la; \
+-	    ln -s $(TARGET).la $(R)$(libdir)/$(TARGET)-$(RADIUSD_VERSION).la || exit $$?; \
++		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la || exit $$?; \
 +	    rm -f $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
-+	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la || exit $?; \
++	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la || exit $$?; \
  	fi
- 	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)

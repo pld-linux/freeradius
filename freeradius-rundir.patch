@@ -10,13 +10,6 @@ diff -dur freeradius-1.0.1.orig/Make.inc.in freeradius-1.0.1/Make.inc.in
  SBINDIR		= ${sbindir}
  RADIR		= ${radacctdir}
  
-@@ -74,4 +74,4 @@
- RADIUSD_VERSION		= @RADIUSD_VERSION@
- 
- MODULES			= @MODULES@
--HOSTINFO		= @HOSTINFO@
-\ No newline at end of file
-+HOSTINFO		= @HOSTINFO@
 diff -dur freeradius-1.0.1.orig/raddb/radiusd.conf.in freeradius-1.0.1/raddb/radiusd.conf.in
 --- freeradius-1.0.1.orig/raddb/radiusd.conf.in	2004-10-13 11:03:48.000000000 +0200
 +++ freeradius-1.0.1/raddb/radiusd.conf.in	2004-10-13 11:09:32.696958268 +0200
