@@ -56,7 +56,7 @@ Requires:	rc-scripts
 Provides:	group(radius)
 Provides:	user(radius)
 Obsoletes:	cistron-radius
-Conflicts:	logrotate < 3.7.4
+Conflicts:	logrotate < 3.7-4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
