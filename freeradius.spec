@@ -32,7 +32,7 @@ BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	mysql-devel
 BuildRequires:	net-snmp-devel
-BuildRequires:	openldap-devel >= 2.3.0
+BuildRequires:	openldap-devel >= 2.4.6
 BuildRequires:	openssl-devel >= 0.9.7d
 BuildRequires:	pam-devel
 BuildRequires:	perl-devel
