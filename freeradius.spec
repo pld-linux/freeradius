@@ -141,6 +141,7 @@ install %{SOURCE3}	$RPM_BUILD_ROOT/etc/pam.d/radius
 # rlm*.la are used (lt_dlopen)
 rm -f $RPM_BUILD_ROOT%{_libdir}/{*.a,*.la}
 rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/*.a
+rm -rf $RPM_BUILD_ROOT%{_docdir}/freeradius
 
 %clean
 rm -rf $RPM_BUILD_ROOT
