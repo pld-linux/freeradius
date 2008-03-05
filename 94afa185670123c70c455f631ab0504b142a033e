@@ -1,0 +1,3 @@
+- need more fixes, because dont detect proper location of pgsql headers
+  (maybe ac/am broken) and some parts looks ugly, btw we should use rm or
+  %{__rm} and so on?
