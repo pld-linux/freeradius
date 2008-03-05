@@ -1,0 +1,17 @@
+diff -durN -x '*~' freeradius-1.0.2.orig/src/modules/rules.mak freeradius-1.0.2/src/modules/rules.mak
+--- freeradius-1.0.2.orig/src/modules/rules.mak	2005-08-04 12:22:57.000000000 +0200
++++ freeradius-1.0.2/src/modules/rules.mak	2005-08-04 12:23:28.000000000 +0200
+@@ -154,10 +154,10 @@
+ #  Otherwise, install the libraries into $(libdir)/freeradius
+ #
+ install:
++	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)
+ 	if [ "x$(TARGET)" != "x" ]; then \
+ 	    $(LIBTOOL) --mode=install $(INSTALL) -c \
+-		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la; \
+-	    rm -f $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la; \
++		$(TARGET).la $(R)$(libdir)/freeradius/$(TARGET).la && \
++	    rm -f $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la && \
+ 	    ln -s $(TARGET).la $(R)$(libdir)/freeradius/$(TARGET)-$(RADIUSD_VERSION).la || exit $?; \
+ 	fi
+-	@[ "x$(RLM_INSTALL)" = "x" ] || $(MAKE) $(MFLAGS) $(RLM_INSTALL)

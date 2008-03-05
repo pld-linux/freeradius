@@ -1,0 +1,91 @@
+#!/bin/sh
+#
+# chkconfig:	- 88 10
+# description:	Start/Stop the RADIUS server daemon
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#    Copyright (C) 2001 The FreeRADIUS Project   http://www.freeradius.org
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -f /etc/raddb/radiusd.conf ] || exit 0
+
+start() {
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/freeradius ]; then
+		msg_starting RADIUS
+		daemon /usr/sbin/radiusd
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/freeradius
+	else
+		msg_already_running RADIUS
+	fi
+}
+
+stop() {
+	# Stop daemons.
+	if [ -f /var/lock/subsys/freeradius ]; then
+		msg_stopping RADIUS
+		killproc /usr/sbin/radiusd
+		rm -f /var/lock/subsys/freeradius > /dev/null 2>&1
+	else
+		msg_not_running RADIUS
+	fi
+}
+
+RETVAL=0
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  status)
+	status radiusd
+	exit $?
+	;;
+  reload)
+	if [ -f /var/lock/subsys/freeradius ]; then
+		msg_reloading RADIUS
+		killproc /usr/sbin/radiusd -HUP
+		RETVAL=$?
+	else
+		msg_not_running RADIUS
+		exit 7
+	fi
+	;;
+  restart|force-reload)
+	stop
+	sleep 3
+	start
+	;;
+#  condrestart)
+#	if [ -f /var/lock/subsys/freeradius ]; then
+#		$0 stop
+#		sleep 3
+#		$0 start
+#		RETVAL=$?
+#	fi
+#	;;
+  *)
+	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL

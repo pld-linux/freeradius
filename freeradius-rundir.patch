@@ -1,0 +1,24 @@
+diff -dur freeradius-1.0.1.orig/Make.inc.in freeradius-1.0.1/Make.inc.in
+--- freeradius-1.0.1.orig/Make.inc.in	2004-01-23 18:08:43.000000000 +0100
++++ freeradius-1.0.1/Make.inc.in	2004-10-13 11:08:27.041360959 +0200
+@@ -45,7 +45,7 @@
+ 
+ LOGDIR		= ${logdir}
+ RADDBDIR	= ${raddbdir}
+-RUNDIR		= ${localstatedir}/run/radiusd
++RUNDIR		= ${localstatedir}/run/freeradius
+ SBINDIR		= ${sbindir}
+ RADIR		= ${radacctdir}
+ 
+diff -dur freeradius-1.0.1.orig/raddb/radiusd.conf.in freeradius-1.0.1/raddb/radiusd.conf.in
+--- freeradius-1.0.1.orig/raddb/radiusd.conf.in	2004-10-13 11:03:48.000000000 +0200
++++ freeradius-1.0.1/raddb/radiusd.conf.in	2004-10-13 11:09:32.696958268 +0200
+@@ -31,7 +31,7 @@
+ 
+ #  Location of config and logfiles.
+ confdir = ${raddbdir}
+-run_dir = ${localstatedir}/run/radiusd
++run_dir = ${localstatedir}/run/freeradius
+ 
+ #
+ #  The logging messages for the server are appended to the
