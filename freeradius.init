@@ -30,9 +30,7 @@ CONFIG=/etc/raddb/radiusd.conf
 [ -f "$RADIUSD" ] || exit 0
 [ -f "$CONFIG" ] || exit 0
 
-RETVAL=0
-case "$1" in
-  start)
+start() {
 	# Check if the service is already running?
 	if [ ! -f "$LOCKF" ]; then
 		msg_starting RADIUS
@@ -42,8 +40,9 @@ case "$1" in
 	else
 		msg_already_running RADIUS
 	fi
-	;;
-  stop)
+}
+
+stop() {
 	# Stop daemons.
 	if [ -f "$LOCKF" ]; then
 		msg_stopping RADIUS
@@ -52,6 +51,15 @@ case "$1" in
 	else
 		msg_not_running RADIUS
 	fi
+}
+
+RETVAL=0
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   status)
 	status radiusd
@@ -68,10 +76,9 @@ case "$1" in
 	fi
 	;;
   restart|force-reload)
-	$0 stop
+	stop
 	sleep 3
-	$0 start
-	RETVAL=$?
+	start
 	;;
 #  condrestart)
 #	if [ -f $LOCKF ]; then
