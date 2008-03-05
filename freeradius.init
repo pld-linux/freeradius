@@ -23,20 +23,15 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-RADIUSD=/usr/sbin/radiusd
-LOCKF=/var/lock/subsys/freeradius
-CONFIG=/etc/raddb/radiusd.conf
-
-[ -f "$RADIUSD" ] || exit 0
-[ -f "$CONFIG" ] || exit 0
+[ -f /etc/raddb/radiusd.conf ] || exit 0
 
 start() {
 	# Check if the service is already running?
-	if [ ! -f "$LOCKF" ]; then
+	if [ ! -f /var/lock/subsys/freeradius ]; then
 		msg_starting RADIUS
-		daemon "$RADIUSD"
+		daemon /usr/sbin/radiusd
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch "$LOCKF"
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/freeradius
 	else
 		msg_already_running RADIUS
 	fi
@@ -44,10 +39,10 @@ start() {
 
 stop() {
 	# Stop daemons.
-	if [ -f "$LOCKF" ]; then
+	if [ -f /var/lock/subsys/freeradius ]; then
 		msg_stopping RADIUS
-		killproc "$RADIUSD"
-		rm -f "$LOCKF" > /dev/null 2>&1
+		killproc /usr/sbin/radiusd
+		rm -f /var/lock/subsys/freeradius > /dev/null 2>&1
 	else
 		msg_not_running RADIUS
 	fi
@@ -66,9 +61,9 @@ case "$1" in
 	exit $?
 	;;
   reload)
-	if [ -f "$LOCKF" ]; then
+	if [ -f /var/lock/subsys/freeradius ]; then
 		msg_reloading RADIUS
-		killproc "$RADIUSD" -HUP
+		killproc /usr/sbin/radiusd -HUP
 		RETVAL=$?
 	else
 		msg_not_running RADIUS
@@ -81,7 +76,7 @@ case "$1" in
 	start
 	;;
 #  condrestart)
-#	if [ -f $LOCKF ]; then
+#	if [ -f /var/lock/subsys/freeradius ]; then
 #		$0 stop
 #		sleep 3
 #		$0 start
