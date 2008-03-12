@@ -1,4 +1,7 @@
 #
+# Conditional build:
+%bcond_with	snmp        # build with snmp support
+#
 %include	/usr/lib/rpm/macros.perl
 # FIXME:
 # - won't be good to include these contrib examples?
@@ -8,7 +11,7 @@ Summary:	High-performance and highly configurable RADIUS server
 Summary(pl.UTF-8):	Szybki i wysoce konfigurowalny serwer RADIUS
 Name:		freeradius
 Version:	1.1.7
-Release:	1
+Release:	2
 License:	GPL
 Group:		Networking/Daemons
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
@@ -29,6 +32,7 @@ BuildRequires:	gdbm-devel
 BuildRequires:	libltdl-devel
 BuildRequires:	libtool
 BuildRequires:	mysql-devel
+%{?with_snmp:BuildRequires:	net-snmp-compat-devel}
 BuildRequires:	net-snmp-devel
 BuildRequires:	openldap-devel >= 2.3.0
 BuildRequires:	openssl-devel >= 0.9.7d
@@ -115,7 +119,8 @@ done
 	--with-ltdl-lib=%{_libdir} \
 	--disable-ltdl-install \
 	--without-rlm_krb5 \
-	--without-rlm_dbm
+	--without-rlm_dbm \
+	--with%{!?with_snmp:out}-snmp
 %{__make} -j1 \
 	LIBTOOL="`pwd`/libtool --tag=CC"
 
