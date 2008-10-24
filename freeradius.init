@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# chkconfig:	- 88 10
+# chkconfig:	345 88 12
 # description:	Start/Stop the RADIUS server daemon
 #
 #    This program is free software; you can redistribute it and/or modify
