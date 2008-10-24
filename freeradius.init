@@ -48,19 +48,34 @@ stop() {
 	fi
 }
 
+condrestart() {
+	if [ -f /var/lock/subsys/freeradius ]; then
+		stop
+		sleep 3
+		start
+	else
+		msg_not_running RADIUS
+		RETVAL=$1
+	fi
+}
+
 RETVAL=0
 case "$1" in
   start)
-  	start
+	start
 	;;
   stop)
-  	stop
+	stop
 	;;
-  status)
-	status radiusd
-	exit $?
+  restart)
+	stop
+	sleep 3
+	start
 	;;
-  reload)
+  try-restart)
+	condrestart 0
+	;;
+  reload|force-reload)
 	if [ -f /var/lock/subsys/freeradius ]; then
 		msg_reloading RADIUS
 		killproc /usr/sbin/radiusd -HUP
@@ -70,21 +85,12 @@ case "$1" in
 		exit 7
 	fi
 	;;
-  restart|force-reload)
-	stop
-	sleep 3
-	start
+  status)
+	status radiusd
+	exit $?
 	;;
-#  condrestart)
-#	if [ -f /var/lock/subsys/freeradius ]; then
-#		$0 stop
-#		sleep 3
-#		$0 start
-#		RETVAL=$?
-#	fi
-#	;;
   *)
-	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|status}"
 	exit 3
 esac
 
