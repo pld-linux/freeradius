@@ -10,7 +10,7 @@ Name:		freeradius
 Version:	1.1.7
 Release:	8
 License:	GPL
-Group:		Networking/Daemons
+Group:		Networking/Daemons/Radius
 Source0:	ftp://ftp.freeradius.org/pub/radius/%{name}-%{version}.tar.gz
 # Source0-md5:	5c126cb2122b8e2ba9784b511fbefd96
 Source1:	%{name}.logrotate
